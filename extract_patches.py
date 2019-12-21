@@ -13,10 +13,47 @@ import openslide
 
 
 def multiprocess_wrapper(args):
+    """Function to generate arguments for multiprocess
+
+    Parameters
+    ----------
+    args : tuple
+        Arugments
+
+    Returns
+    -------
+    Call functions for multiprocess
+    """
     return extract_annotated_patches(*args)
 
 
 def extract_annotated_patches(slide_path, save_dir, slide_label, annotation, patch_size, resize_size):
+    """Function to generate patches based on annotated polygon
+
+    Parameters
+    ----------
+    slide_path : str
+        Aboluate path to a slide
+
+    save_dir : str
+        Aboluate path to a directory that stores patches
+
+    slide_label : str
+        The ground truth label for a whole slide image
+
+    annotation : list
+        A list of tuple that contains (label, ploygon)
+
+    patch_size : int
+        Extraction patch size
+
+    resize_size : int
+        Resizing size
+
+    Returns
+    -------
+    None
+    """
     slide = openslide.OpenSlide(slide_path)
     slide_width, slide_height = slide.level_dimensions[0]
     slide_id = utils.strip_extension(slide_path).split('/')[-1]
@@ -35,6 +72,32 @@ def extract_annotated_patches(slide_path, save_dir, slide_label, annotation, pat
 
 
 def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, patch_size, resize_size):
+    """Function to map the extraction function to multiprocess
+
+    Parameters
+    ----------
+    slide_path : str
+        Aboluate path to a slide
+
+    save_dir : str
+        Aboluate path to a directory that stores patches
+
+    slide_label : str
+        The ground truth label for a whole slide image
+
+    annotation : list
+        A list of tuple that contains (label, ploygon)
+
+    patch_size : int
+        Extraction patch size
+
+    resize_size : int
+        Resizing size
+
+    Returns
+    -------
+    None
+    """
     slides = glob.glob(os.path.join(slide_dir, '**', '*.tiff'))
     annotations = utils.read_annotations(annotation_dir)
     slides = utils.exclude_slides_without_annotations(slides, annotations)
@@ -50,6 +113,29 @@ def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, p
 
 
 def produce_args(slides, save_dir, annotations, patch_size, resize_size):
+    """Function to generate arguments
+
+    Parameters
+    ----------
+    slide_path : str
+        Aboluate path to a slide
+
+    save_dir : str
+        Aboluate path to a directory that stores patches
+
+    annotations : list
+        A list of tuple that contains (label, ploygon)
+
+    patch_size : int
+        Extraction patch size
+
+    resize_size : int
+        Resizing size
+
+    Returns
+    -------
+    None
+    """
     args = []
     for slide in slides:
         slide_id, slide_label = utils.get_info_from_slide_path(slide)
@@ -60,15 +146,32 @@ def produce_args(slides, save_dir, annotations, patch_size, resize_size):
         args.append(arg)
     return args
 
-def store_image_to_h5(data_dir, h5f_image):
-    patch_ids = glob.glob(os.path.join(data_dir, '**', '**', '*.png'))
-    prefix = 'Storing Patches: '
-    for idx, patch_id in enumerate(tqdm(patch_ids, desc=prefix)):
-        if patch_id not in h5f_image:
-            cur_image = Image.open(patch_id).convert('RGB')
-            patch_id = utils.create_patch_id(patch_id)
-            image_grp = h5f_image.require_group(patch_id)
-            image_grp.create_dataset('image_data', data=np.asarray(cur_image))
+
+def store_image_to_h5(data_dir, h5f_path):
+    """Function to generate arguments
+
+    Parameters
+    ----------
+    data_dir : str
+        Absoluate path to a directory that stores patches
+
+    h5f_path : str
+        Absoluate path to store h5 file
+
+    Returns
+    -------
+    None
+    """
+    with h5py.File(h5f_path) as h5f_image:
+        patch_ids = glob.glob(os.path.join(data_dir, '**', '**', '*.png'))
+        prefix = 'Storing Patches: '
+        for idx, patch_id in enumerate(tqdm(patch_ids, desc=prefix)):
+            if patch_id not in h5f_image:
+                cur_image = Image.open(patch_id).convert('RGB')
+                patch_id = utils.create_patch_id(patch_id)
+                image_grp = h5f_image.require_group(patch_id)
+                image_grp.create_dataset(
+                    'image_data', data=np.asarray(cur_image))
 
 
 if __name__ == '__main__':
@@ -79,8 +182,10 @@ if __name__ == '__main__':
                         default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300')
     parser.add_argument('--annotation_dir', type=str, required=False,
                         default='/projects/ovcare/classification/ywang/midl_dataset/annotations')
-    parser.add_argument('--h5_save_path', type=str, required=False, default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300.hdf5')
-    parser.add_argument('--patch_ids_save_path', type=str, required=False, default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300_patch_ids.txt')
+    parser.add_argument('--h5_save_path', type=str, required=False,
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300.hdf5')
+    parser.add_argument('--patch_ids_save_path', type=str, required=False,
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300_patch_ids.txt')
     parser.add_argument('--patch_size', type=int, required=True)
     parser.add_argument('--resize_size', type=int, required=True)
 

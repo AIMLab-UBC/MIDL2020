@@ -48,7 +48,8 @@ def raw(image, is_eval=False, apply_color_jitter=True):
         A tensor contains PyTorch image
     """
 
-    np_image = np.asarray(COLOR_JITTER(image)).copy() if apply_color_jitter else np.asarray(image).copy()
+    np_image = np.asarray(COLOR_JITTER(image)).copy(
+    ) if apply_color_jitter else np.asarray(image).copy()
     np_image = (np_image - 128.) / 128.
     image_tensor = image_numpy_to_tensor(np_image, is_eval)
     return image_tensor
