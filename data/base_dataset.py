@@ -17,7 +17,7 @@ class BaseDataset(Dataset):
         self.preload_image_file_name = config.preload_image_file_name
         self.is_eval = config.mode != 'Training'
         self.deep_classifier = config.deep_classifier
-        self.online_classifier = config.online_classifier
+        self.count_fusion_model = config.count_fusion_model
         self.n_eval_samples = config.n_eval_samples
         self.log_patches = config.log_patches
         self.patch_size = config.patch_size

@@ -26,9 +26,9 @@ class BaseModel():
 
     def __init__(self, config):
         self.config = config
-        self.deep_classifier = config.deep_classifier       # e.g., vgg19_bn, resnet50
-        self.deep_model = config.deep_model                 # e.g., Maestro, DeepModel
-        # avoid same hyperparameters setup result in the same name
+        self.deep_classifier = config.deep_classifier
+        self.deep_model = config.deep_model
+        self.count_fusion_model = config.count_fusion_model
         self.model_name_prefix = config.model_name_prefix
         self.lr = config.lr
         self.batch_size = config.batch_size
@@ -42,11 +42,9 @@ class BaseModel():
         self.continue_train = config.continue_train
         self.log_patches = config.log_patches
         self.optim = config.optim
-        self.load_pretrained = config.load_pretrained
         self.use_equalized_batch = config.use_equalized_batch
         self.use_kappa_select_model = config.use_kappa_select_model
         self.load_model_id = config.load_model_id
-        # store evaluation data labels
         self.eval_data_labels = []
 
     def eval(self, eval_data_ids):

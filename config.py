@@ -28,17 +28,11 @@ main_arg.add_argument('--dataset_dir', type=str,
                       default='/projects/ovcare/classification/ywang/dataset/',
                       help='Slide and patch id files directory')
 
-main_arg.add_argument('--data_loader', type=str,
-                      default='SubtypePatchDataset')
-
 main_arg.add_argument('--deep_model', type=str,
                       default='DeepModel')
 
 main_arg.add_argument('--deep_classifier', type=str,
                       default='vgg19_bn')
-
-main_arg.add_argument('--online_model', type=str,
-                      default='DeepModel')
 
 main_arg.add_argument('--train_ids_file_name', type=str,
                       default='768_60_shuffle_ids/60_shuffle_patient_train_0.txt',
@@ -58,14 +52,10 @@ main_arg.add_argument('--distribution_output_file_name',
 main_arg.add_argument('--preload_image_file_name',
                       type=str, default='progressive_resizing.hdf5')
 
-main_arg.add_argument('--online_classifier', type=str,
-                      default='SGDClassifier')
 
 main_arg.add_argument('--count_fusion_model', type=str,
                       default='KNeighbors')
 
-main_arg.add_argument('--maestro_version', type=str,
-                      default='MaestroV1')
 
 main_arg.add_argument('--count_exclude_mode', type=str,
                       default='none')
@@ -83,16 +73,10 @@ main_arg.add_argument('--batch_size', type=int,
                       default=32,
                       help='Batch size')
 
-main_arg.add_argument('--filter_size', type=int,
-                      default=1,
-                      help='Filter Size in Anti Alias CNN')
 
 main_arg.add_argument('--eval_batch_size', type=int,
                       default=1,
                       help='Batch size')
-
-main_arg.add_argument('--disable_first_n_layers', type=int,
-                      default=-1)
 
 main_arg.add_argument('--lr', type=float,
                       default=0.0002,
@@ -136,8 +120,6 @@ main_arg.add_argument('--use_kappa_select_model', action='store_true')
 main_arg.add_argument('--use_equalized_batch', action='store_true')
 
 main_arg.add_argument('--use_image_input', action='store_true')
-
-main_arg.add_argument('--runtime_resize', action='store_true')
 
 main_arg.add_argument('--load_model_id', type=str,
                       default='max_val_acc')

@@ -19,19 +19,17 @@ class SubtypePatchDataset(BaseDataset):
             # obatin all the the patch has the same label
             label_idx = self.label_list == sample_label
             # randomly select one patch
-            selected_data_id = np.random.choice(self.cur_data_ids[label_idx])
-            patch_id = utils.create_patch_id(selected_data_id)
-            cur_label = utils.get_label_by_patch_id(selected_data_id)
+            cur_data_id = np.random.choice(self.cur_data_ids[label_idx])
         else:
             cur_data_id = self.cur_data_ids[index]
-            # create patch id by stripping the image extension
-            # and only obtain `/subtype/slide_id/image_location` format
-            # for h5 file to obtain the image data
-            patch_id = utils.create_patch_id(cur_data_id)
-            cur_label = utils.get_label_by_patch_id(cur_data_id)
-            cur_image = Image.fromarray(cur_image)
-            cur_tensor = preprocess.raw(
-                cur_image, apply_color_jitter=self.apply_color_jitter)
 
+        # create patch id by stripping the image extension
+        # and only obtain `/subtype/slide_id/image_location` format
+        # for h5 file to obtain the image data
+        patch_id = utils.create_patch_id(cur_data_id)
+        cur_label = utils.get_label_by_patch_id(patch_id)
+        cur_image = Image.fromarray(cur_image)
+        cur_tensor = preprocess.raw(
+            cur_image, apply_color_jitter=self.apply_color_jitter)
         cur_label = torch.tensor(cur_label).type(torch.LongTensor).cuda()
         return (cur_tensor, ), cur_label, patch_id
