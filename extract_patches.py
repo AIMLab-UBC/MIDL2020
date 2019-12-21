@@ -184,7 +184,7 @@ if __name__ == '__main__':
     parser.add_argument('--annotation_dir', type=str, required=False,
                         default='/projects/ovcare/classification/ywang/midl_dataset/annotations')
     parser.add_argument('--h5_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300.hdf5')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300.h5')
     parser.add_argument('--patch_ids_save_path', type=str, required=False,
                         default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300_patch_ids.txt')
     parser.add_argument('--patch_size', type=int, required=True)
