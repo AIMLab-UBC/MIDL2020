@@ -7,6 +7,7 @@ import data.preprocess as preprocess
 import utils.utils as utils
 import os
 import glob
+import h5py
 import psutil
 import argparse
 import openslide
