@@ -17,22 +17,16 @@ main_arg.add_argument('--mode', type=str,
                       help='Running mode')
 
 main_arg.add_argument('--save_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/project_save/gan_eval_save/',
+                      default='/projects/ovcare/classification/ywang/project_save/midl_save/',
                       help='Save model weights')
 
 main_arg.add_argument('--log_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/project_log/gan_eval_log/',
+                      default='/projects/ovcare/classification/ywang/project_log/midl_log/',
                       help='TensorBoard directory')
 
 main_arg.add_argument('--dataset_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/dataset/',
+                      default='/projects/ovcare/classification/ywang/midl_dataset/',
                       help='Slide and patch id files directory')
-
-main_arg.add_argument('--deep_model', type=str,
-                      default='DeepModel')
-
-main_arg.add_argument('--deep_classifier', type=str,
-                      default='vgg19_bn')
 
 main_arg.add_argument('--train_ids_file_name', type=str,
                       default='768_60_shuffle_ids/60_shuffle_patient_train_0.txt',
@@ -50,12 +44,13 @@ main_arg.add_argument('--distribution_output_file_name',
                       type=str, default='a_distribution.txt')
 
 main_arg.add_argument('--preload_image_file_name',
-                      type=str, default='progressive_resizing.hdf5')
+                      type=str, default='768_monoscale_300.h5')
 
+main_arg.add_argument('--deep_classifier', type=str,
+                      default='vgg19_bn')
 
-main_arg.add_argument('--count_fusion_model', type=str,
+main_arg.add_argument('--count_fusion_classifier', type=str,
                       default='KNeighbors')
-
 
 main_arg.add_argument('--count_exclude_mode', type=str,
                       default='none')

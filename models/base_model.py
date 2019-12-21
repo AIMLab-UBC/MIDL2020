@@ -27,8 +27,7 @@ class BaseModel():
     def __init__(self, config):
         self.config = config
         self.deep_classifier = config.deep_classifier
-        self.deep_model = config.deep_model
-        self.count_fusion_model = config.count_fusion_model
+        self.count_fusion_classifier = config.count_fusion_classifier
         self.model_name_prefix = config.model_name_prefix
         self.lr = config.lr
         self.batch_size = config.batch_size
