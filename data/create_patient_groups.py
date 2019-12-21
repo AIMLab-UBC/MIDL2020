@@ -21,16 +21,12 @@ def latex_formatter(counts, prefix):
         prefix, int(counts[0]), int(counts[1]), int(counts[2]), int(counts[3]), int(counts[4]), int(counts.sum())))
 
 
-def group_summary(group_json, is_multiscale=False, scale=None):
+def group_summary(group_json):
     """Function to print the group summary
     Parameters
     ----------
     group_json : string
         Absoluate path to group information json file
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -54,7 +50,7 @@ def group_summary(group_json, is_multiscale=False, scale=None):
 
         for patch_id in patch_ids:
             slide_id = utils.get_slide_by_patch_id(
-                patch_id, is_multiscale=is_multiscale)
+                patch_id)
 
             match = re.search(PATIENT_REGEX, slide_id)
             if match:
@@ -64,12 +60,12 @@ def group_summary(group_json, is_multiscale=False, scale=None):
 
             if patient_num not in patients:
                 patient_subtype = SubtypeEnum(utils.get_label_by_patch_id(
-                    patch_id, is_multiscale=is_multiscale)).name
+                    patch_id)).name
                 subtype_patient_counts[patient_subtype] += 1
 
             patients.add(patient_num)
             patch_subtype = SubtypeEnum(utils.get_label_by_patch_id(
-                patch_id, is_multiscale=is_multiscale)).name
+                patch_id)).name
 
             subtype_patch_counts[patch_subtype] += 1
             total_patch_counts[patch_subtype] += 1
@@ -89,7 +85,7 @@ def group_summary(group_json, is_multiscale=False, scale=None):
         [total_patch_counts[s.name] for s in SubtypeEnum]), 'Patch')
 
 
-def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, seed, is_multiscale=False, n_subtype=5, scale='1024'):
+def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, seed, n_subtype=5, scale='1024'):
     """Function to generate N groups that contain unique patients
 
     Parameters
@@ -111,10 +107,6 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
 
     seed : int
         Random
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     n_subtype: int
         Numbe of subtypes
@@ -138,16 +130,12 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
     if os.path.isfile(patch_dir):
         patches = utils.read_data_ids(patch_dir)
     elif os.path.isdir(patch_dir):
-        if is_multiscale:
-            patches = glob.glob(os.path.join(
-                patch_dir, '**', '**', scale, '*.png'))
-        else:
-            patches = glob.glob(os.path.join(patch_dir, '**', '**', '*.png'))
+        patches = glob.glob(os.path.join(patch_dir, '**', '**', '*.png'))
     else:
         raise NotImplementedError
 
     subtype_patient_slide_patch = utils.create_subtype_patient_slide_patch_dict(
-        patches, is_multiscale=is_multiscale)
+        patches)
 
     for subtype, patient_slide_patch in subtype_patient_slide_patch.items():
         for patient, slide_patch in patient_slide_patch.items():
@@ -187,13 +175,13 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
     with open(out_path, 'w') as f:
         json.dump(groups, f)
 
-    group_summary(groups, is_multiscale=is_multiscale, scale=scale)
+    group_summary(groups)
 
     print('Ignored Slides')
     print(ignored_slides)
 
 
-def create_val_test_splits(eval_ids, is_multiscale=False):
+def create_val_test_splits(eval_ids):
     """Function to create validation and test splits based on evaluation ids
        This function ensures unique patches in validation and testing sets
 
@@ -201,10 +189,6 @@ def create_val_test_splits(eval_ids, is_multiscale=False):
     ----------
     eval_ids : list
         List of patch ids in evaludation set
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -216,7 +200,7 @@ def create_val_test_splits(eval_ids, is_multiscale=False):
     """
     subtype_names = [s.name for s in SubtypeEnum]
     subtype_patient_slide_patch = utils.create_subtype_patient_slide_patch_dict(
-        eval_ids, is_multiscale=is_multiscale)
+        eval_ids)
     val_ids = []
     test_ids = []
     for subtype in subtype_names:
@@ -239,7 +223,7 @@ def create_val_test_splits(eval_ids, is_multiscale=False):
     return val_ids, test_ids
 
 
-def create_train_val_test_splits(json_path, out_dir, prefix, seed, is_multiscale=False):
+def create_train_val_test_splits(json_path, out_dir, prefix, seed):
     """Function to create training, validation and testing sets
 
     Parameters
@@ -253,10 +237,6 @@ def create_train_val_test_splits(json_path, out_dir, prefix, seed, is_multiscale
     preifx : string
         For different experiments
 
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
     Returns
     -------
     None
@@ -265,7 +245,7 @@ def create_train_val_test_splits(json_path, out_dir, prefix, seed, is_multiscale
         groups = json.load(f)
     train_ids = groups['group_1']
     val_ids, test_ids = create_val_test_splits(
-        groups['group_2'], is_multiscale=is_multiscale)
+        groups['group_2'])
 
     with open(os.path.join(out_dir, prefix + '_train_ids.txt'), 'w') as f:
         random.seed(seed)
@@ -296,7 +276,6 @@ if __name__ == "__main__":
                         default='/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/60_patient_groups.json')
     parser.add_argument("--min_patches", type=int, default=0)
     parser.add_argument("--max_patches", type=int, default=1000000)
-    parser.add_argument("--is_multiscale", action='store_true')
     parser.add_argument("--split_dir", type=str,
                         default='/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/')
     parser.add_argument("--split_prefix", type=str,
@@ -305,21 +284,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    for i in range(0, 10):
+    for i in range(0, 3):
         args.seed = i * 4 + 3
-
         generate_groups(args.n_groups, args.patch_dir, args.out_path,
-                        args.min_patches, args.max_patches, seed=args.seed, is_multiscale=args.is_multiscale, scale=str(i))
-
+                        args.min_patches, args.max_patches, seed=args.seed, scale=str(i))
         create_train_val_test_splits(
-            args.out_path, args.split_dir, args.split_prefix + '_split_' + str(i), seed=args.seed, is_multiscale=args.is_multiscale)
-
+            args.out_path, args.split_dir, args.split_prefix + '_split_' + str(i), seed=args.seed)
         utils.classification_splits_summary(
-            args.split_dir, args.split_prefix + '_split_' + str(i), is_multiscale=args.is_multiscale)
-
-    utils.gan_eval_n_patch_per_slide('/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/',
-                                     '/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/300_patch_ids.txt',
-                                     '/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/fake_patch_ids.txt', n_patch_per_slide=30, is_multiscale=args.is_multiscale)
-
-    utils.gan_eval_splits_summary(
-        '/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/', n_patch_per_slide=30, is_multiscale=args.is_multiscale)
+            args.split_dir, args.split_prefix + '_split_' + str(i))

@@ -52,8 +52,7 @@ class BaseDataset(Dataset):
             # extract patch label beforehand
             self.label_list = []
             for cur_data_id in self.cur_data_ids:
-                cur_label = utils.get_label_by_patch_id(
-                    cur_data_id, is_multiscale=self.is_multiscale)
+                cur_label = utils.get_label_by_patch_id(cur_data_id)
                 self.label_list += [cur_label]
             # for fast numpy indexing
             self.label_list = np.asarray(self.label_list)

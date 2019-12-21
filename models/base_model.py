@@ -60,7 +60,7 @@ class BaseModel():
             if len(self.eval_data_labels) == 0:
                 for eval_data_id in eval_data_ids:
                     self.eval_data_labels += [
-                        utils.get_label_by_patch_id(eval_data_id, self.is_multiscale)]
+                        utils.get_label_by_patch_id(eval_data_id)]
                 # convert to numpy array for fast indexing
                 self.eval_data_labels = np.asarray(self.eval_data_labels)
             # store the evaluation patch ids

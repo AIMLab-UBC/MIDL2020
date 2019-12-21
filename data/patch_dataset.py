@@ -4,7 +4,6 @@ import utils.utils as utils
 import data.preprocess as preprocess
 import numpy as np
 import torch
-import random
 
 
 class SubtypePatchDataset(BaseDataset):

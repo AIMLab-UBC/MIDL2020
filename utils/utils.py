@@ -186,7 +186,7 @@ def strip_extension(path):
     return str(p.with_suffix(''))
 
 
-def create_patch_id(path, is_multiscale=False):
+def create_patch_id(path):
     """Function to create patch id
 
     Parameters
@@ -194,16 +194,12 @@ def create_patch_id(path, is_multiscale=False):
     path : string
         Absoluate path to a patch
 
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
     Returns
     -------
     patch_id : string
         Remove useless information before patch id for h5 file storage
     """
-    label_idx = -4 if is_multiscale else -3
+    label_idx = -3
     patch_id = strip_extension(path).split('/')[label_idx:]
     patch_id = '/'.join(patch_id)
     return patch_id
@@ -232,7 +228,7 @@ def create_multiscale_ids(patch_id):
     return patch_20x_id, patch_10x_id, patch_5x_id
 
 
-def count_subtype(input_src, n_subtypes=5, is_multiscale=False):
+def count_subtype(input_src, n_subtypes=5):
     """Function to count the number of patches for each subtype
 
     Parameters
@@ -243,10 +239,6 @@ def count_subtype(input_src, n_subtypes=5, is_multiscale=False):
 
     n_subtypes : int
         Number of subtypes (or classes)
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -268,21 +260,17 @@ def count_subtype(input_src, n_subtypes=5, is_multiscale=False):
 
     for patch_id in contents:
         cur_label = get_label_by_patch_id(
-            patch_id, is_multiscale=is_multiscale)
+            patch_id)
         count_per_subtype[cur_label] = count_per_subtype[cur_label] + 1.
     return count_per_subtype
 
 
-def get_label_by_patch_id(patch_id, is_multiscale=False):
+def get_label_by_patch_id(patch_id):
     """Function to obtain label from patch id
 
     Parameters
     ----------
     patch_id : string
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
-    is_multiscale : bool
         For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
         For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
@@ -292,24 +280,18 @@ def get_label_by_patch_id(patch_id, is_multiscale=False):
         Integer label from SubtypeEnum
 
     """
-    label_idx = -4 if is_multiscale else -3
-    if 'fake' in patch_id:
-        label_idx = -3
+    label_idx = -3
     label = patch_id.split('/')[label_idx]
     label = SubtypeEnum[label.upper()]
     return label.value
 
 
-def get_slide_by_patch_id(patch_id, is_multiscale=False):
+def get_slide_by_patch_id(patch_id):
     """Function to obtain slide id from patch id
 
     Parameters
     ----------
     patch_id : string
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
-    is_multiscale : bool
         For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
         For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
@@ -319,7 +301,7 @@ def get_slide_by_patch_id(patch_id, is_multiscale=False):
         Slide id extracted from `patch_id`
 
     """
-    slide_idx = -3 if is_multiscale else -2
+    slide_idx = -2
     slide_id = patch_id.split('/')[slide_idx]
     return slide_id
 
@@ -371,41 +353,6 @@ def get_annotation_polygons(annotation_file_path):
     return annotations
 
 
-def compute_dataset_percentage(patch_ids, is_multiscale=False):
-    """Function to compute the percentage of each subtype inside a dataset
-
-    Parameters
-    ----------
-    patch_ids : list
-        List of patch ids
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
-    Returns
-    -------
-    subtype_percentage : dict
-        Dictionary contains the percentage for each subtype in a dataset
-
-    subtype_count : dict
-        Dictionary contains the number of patches for each subtype
-
-    """
-    subtype_names = [s.name for s in SubtypeEnum]
-    subtype_percentage = dict(zip(subtype_names, [0 for s in subtype_names]))
-    subtype_count = count_subtype(patch_ids, n_subtypes=len(
-        subtype_names), is_multiscale=is_multiscale)
-    total_patches = sum(subtype_count)
-    subtype_count = dict(zip(subtype_names, [s for s in subtype_count]))
-
-    for cur_subtype_name, cur_subtype_count in subtype_count.items():
-        subtype_percentage[cur_subtype_name] = cur_subtype_count / \
-            total_patches
-
-    return subtype_percentage, subtype_count
-
-
 def set_gpus(n_gpus, verbose=False):
     """Function to set the exposed GPUs
 
@@ -440,17 +387,13 @@ def set_gpus(n_gpus, verbose=False):
         [str(s) for s in selected_gpu])
 
 
-def create_patch_ids_by_slide(patch_ids, is_multiscale=False):
+def create_patch_ids_by_slide(patch_ids):
     """Function to create patch ids sorted by slide ids
 
     Parameters
     ----------
     patch_ids : list
         List of patch ids
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -463,26 +406,22 @@ def create_patch_ids_by_slide(patch_ids, is_multiscale=False):
     """
     slide_patches = {}
     for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id, is_multiscale=is_multiscale)
+        patch_id = create_patch_id(patch_id)
         slide_id = get_slide_by_patch_id(
-            patch_ids, is_multiscale=is_multiscale)
+            patch_ids)
         if slide_id not in slide_patches:
             slide_patches[slide_id] = []
         slide_patches[slide_id] += [patch_id]
     return list(slide_patches.items()), len(slide_patches)
 
 
-def create_patch_ids_by_patient(patch_ids, is_multiscale=False):
+def create_patch_ids_by_patient(patch_ids):
     """Function to create patch ids sorted by patient ids
 
     Parameters
     ----------
     patch_ids : list
         List of patch ids
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -495,9 +434,9 @@ def create_patch_ids_by_patient(patch_ids, is_multiscale=False):
     """
     patient_patches = {}
     for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id, is_multiscale=is_multiscale)
+        patch_id = create_patch_id(patch_id)
         slide_id = get_slide_by_patch_id(
-            patch_ids, is_multiscale=is_multiscale)
+            patch_ids)
         match = re.search(PATIENT_REGEX, slide_id)
         if match:
             patient_id = match.group(1)
@@ -507,17 +446,13 @@ def create_patch_ids_by_patient(patch_ids, is_multiscale=False):
     return list(patient_patches.items()), len(patient_patches)
 
 
-def create_subtype_slide_patch_dict(patch_ids, is_multiscale=False):
+def create_subtype_slide_patch_dict(patch_ids):
     """Function to patch ids sorted by {subtype: {slide_id: [patch_id]}
 
     Parameters
     ----------
     patch_ids : list
         List of patch ids
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -527,29 +462,25 @@ def create_subtype_slide_patch_dict(patch_ids, is_multiscale=False):
     """
     subtype_slide_patch = {}
     for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id, is_multiscale=is_multiscale)
+        patch_id = create_patch_id(patch_id)
         patch_subtype = SubtypeEnum(get_label_by_patch_id(
-            patch_id, is_multiscale=is_multiscale)).name
+            patch_id)).name
         if patch_subtype not in subtype_slide_patch:
             subtype_slide_patch[patch_subtype] = {}
-        slide_id = get_slide_by_patch_id(patch_id, is_multiscale=is_multiscale)
+        slide_id = get_slide_by_patch_id(patch_id)
         if slide_id not in subtype_slide_patch[patch_subtype]:
             subtype_slide_patch[patch_subtype][slide_id] = []
         subtype_slide_patch[patch_subtype][slide_id] += [patch_id]
     return subtype_slide_patch
 
 
-def create_subtype_patient_slide_patch_dict(patch_ids, is_multiscale=False):
+def create_subtype_patient_slide_patch_dict(patch_ids):
     """Function to patch ids sorted by {subtype: {patient: {slide_id: [patch_id]}}
 
     Parameters
     ----------
     patch_ids : list
         List of patch ids
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -559,12 +490,12 @@ def create_subtype_patient_slide_patch_dict(patch_ids, is_multiscale=False):
     """
     subtype_patient_slide_patch = {}
     for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id, is_multiscale=is_multiscale)
+        patch_id = create_patch_id(patch_id)
         patch_subtype = SubtypeEnum(get_label_by_patch_id(
-            patch_id, is_multiscale=is_multiscale)).name
+            patch_id)).name
         if patch_subtype not in subtype_patient_slide_patch:
             subtype_patient_slide_patch[patch_subtype] = {}
-        slide_id = get_slide_by_patch_id(patch_id, is_multiscale=is_multiscale)
+        slide_id = get_slide_by_patch_id(patch_id)
         match = re.search(PATIENT_REGEX, slide_id)
         if match:
             patient_id = match.group(1)
@@ -627,7 +558,7 @@ def prob_gap(probs):
     return largest_prob - sec_largest_prob
 
 
-def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', threshold=0.99, is_multiscale=False):
+def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', threshold=0.99):
     """Function to parse the distribution file (i.e., the probability for each subtype)
 
     Parameters
@@ -643,10 +574,6 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
 
     threshold (optional): float
         Exclude criterion for the patch prediction
-
-    is_multiscale : bool
-        For non-multiscale patch, patch id has format: /subtype/slide_id/patch_location
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
 
     Returns
     -------
@@ -699,9 +626,9 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
             probs[idx] = prob
             # obtain ground truth label from data path
             utils.get_label_by_patch_id(
-                patch_id, is_multiscale=is_multiscale)
+                patch_id)
             gt_label = np.array(get_label_by_patch_id(
-                patch_info[patch_info_idx], is_multiscale=is_multiscale))
+                patch_info[patch_info_idx]))
             pred_label = np.argmax(prob)
             pred_labels[idx] = pred_label
             gt_labels[idx] = gt_label
@@ -761,7 +688,7 @@ def extract_patient_ids(slide_ids):
     return patient_ids
 
 
-def classification_splits_summary(ids_dir, prefix, is_multiscale):
+def classification_splits_summary(ids_dir, prefix):
     def _print_summary(counts, prefix):
         percentages = np.asarray(counts)
         percentages = counts / counts.sum() * 100
@@ -769,11 +696,11 @@ def classification_splits_summary(ids_dir, prefix, is_multiscale):
             prefix, percentages[0], percentages[1], percentages[2], percentages[3], percentages[4], int(counts.sum())) + '\\')
 
     counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_train_ids.txt'), is_multiscale=is_multiscale)
+        ids_dir, prefix + '_train_ids.txt'))
     _print_summary(counts, 'Training Set')
     counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_val_ids.txt'), is_multiscale=is_multiscale)
+        ids_dir, prefix + '_val_ids.txt'))
     _print_summary(counts, 'Validation Set')
     counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_test_ids.txt'), is_multiscale=is_multiscale)
+        ids_dir, prefix + '_test_ids.txt'))
     _print_summary(counts, 'Testing Set')
