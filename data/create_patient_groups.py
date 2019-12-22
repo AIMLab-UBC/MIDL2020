@@ -18,6 +18,7 @@ PATIENT_REGEX = utils.PATIENT_REGEX
 
 
 def latex_formatter(counts, prefix):
+    prefix = prefix.replace('_', ' ')
     print(r'{} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} \\'.format(
         prefix, int(counts[0]), int(counts[1]), int(counts[2]), int(counts[3]), int(counts[4]), int(counts.sum())))
 
