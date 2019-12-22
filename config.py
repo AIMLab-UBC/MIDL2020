@@ -44,7 +44,7 @@ main_arg.add_argument('--testing_output_file_name',
                       type=str, default='a_patch_probability.txt')
 
 main_arg.add_argument('--preload_image_file_name',
-                      type=str, default='768_monoscale_300.h5')
+                      type=str, default='768_monoscale.h5')
 
 main_arg.add_argument('--deep_classifier', type=str,
                       default='vgg19_bn')
