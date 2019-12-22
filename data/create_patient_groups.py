@@ -241,6 +241,8 @@ def create_train_val_test_splits(json_path, out_dir, prefix, seed):
     -------
     None
     """
+    # TODO: Cross validation
+
     with open(json_path, 'r') as f:
         groups = json.load(f)
     train_ids = groups['group_1']

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from multiprocessing import Pool
+from PIL import Image
 from tqdm import tqdm
 import numpy as np
 import data.preprocess as preprocess
