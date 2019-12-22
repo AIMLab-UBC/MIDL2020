@@ -83,7 +83,7 @@ class BaseModel():
                     cur_eval_ids += np.random.choice(
                         eval_data_ids[cur_subtype_idx], per_subtype_samples).tolist()
         # evaluation during training
-        n_correct = 0
+        n_correct = 0.
         if self.use_kappa_select_model:
             pred_list = []
             gt_list = []
@@ -109,7 +109,7 @@ class BaseModel():
                 gt_list += [gt_label]
             else:
                 if pred_label == gt_label:
-                    n_correct += 1
+                    n_correct += 1.
         # set model back to train mode
         self.model.train()
         if self.use_kappa_select_model:
