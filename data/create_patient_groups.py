@@ -271,7 +271,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for train_id in train_ids:
                 f.write('{}\n'.format(train_id))
         latex_formatter(utils.count_subtype(
-            group_name + '_train_ids.txt'), group_name + '_train_ids')
+            os.path.join(out_dir, group_name + '_train_ids.txt'), group_name + '_train_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -279,7 +279,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for val_id in val_ids:
                 f.write('{}\n'.format(val_id))
         latex_formatter(utils.count_subtype(
-            group_name + '_eval_0_ids.txt'), group_name + '_eval_0_ids')
+            os.path.join(out_dir, group_name + '_eval_0_ids.txt'), group_name + '_eval_0_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -287,11 +287,11 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for test_id in test_ids:
                 f.write('{}\n'.format(test_id))
         latex_formatter(utils.count_subtype(
-            group_name + '_eval_1_ids.txt'), group_name + '_eval_1_ids')
+            os.path.join(out_dir, group_name + '_eval_1_ids.txt'), group_name + '_eval_1_ids')
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser=argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=256)
     parser.add_argument("--n_groups", type=int, default=3)
     parser.add_argument("--n_train_groups", type=int, default=2)
@@ -304,7 +304,7 @@ if __name__ == "__main__":
     parser.add_argument("--split_dir", type=str,
                         default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/patch_ids/')
 
-    args = parser.parse_args()
+    args=parser.parse_args()
 
     generate_groups(args.n_groups, args.patch_dir, args.out_path,
                     args.min_patches, args.max_patches, seed=args.seed)
