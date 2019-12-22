@@ -17,27 +17,27 @@ main_arg.add_argument('--mode', type=str,
                       help='Running mode')
 
 main_arg.add_argument('--save_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/project_save/midl_save/',
+                      default='/projects/ovcare/classification/ywang/project_save/midl_768_monoscale_save/',
                       help='Save model weights')
 
 main_arg.add_argument('--log_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/project_log/midl_log/',
+                      default='/projects/ovcare/classification/ywang/project_log/midl_768_monoscale_log/',
                       help='TensorBoard directory')
 
 main_arg.add_argument('--dataset_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/midl_dataset/',
+                      default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/',
                       help='Slide and patch id files directory')
 
 main_arg.add_argument('--train_ids_file_name', type=str,
-                      default='768_60_shuffle_ids/60_shuffle_patient_train_0.txt',
+                      default='patch_ids/1_2_train_3_eval_train_ids.txt',
                       help='Training patch path ids')
 
 main_arg.add_argument('--val_ids_file_name', type=str,
-                      default='768_60_shuffle_ids/60_shuffle_patient_eval_0.txt',
+                      default='patch_ids/1_2_train_3_eval_eval_0_ids.txt',
                       help='Validation patch path ids')
 
 main_arg.add_argument('--test_ids_file_name', type=str,
-                      default='768_300_patch_ids/768_300_test_ids.txt',
+                      default='patch_ids/1_2_train_3_eval_eval_1_ids.txt',
                       help='Testing patch path ids')
 
 main_arg.add_argument('--testing_output_file_name',
@@ -75,7 +75,7 @@ main_arg.add_argument('--eval_batch_size', type=int,
 
 main_arg.add_argument('--lr', type=float,
                       default=0.0002,
-                      help='You know, the learning rate')
+                      help='Learning rate')
 
 main_arg.add_argument('--gamma', type=float, default=1)
 
