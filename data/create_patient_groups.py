@@ -271,7 +271,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for train_id in train_ids:
                 f.write('{}\n'.format(train_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_train_ids.txt'), group_name + '_train_ids'))
+            os.path.join(out_dir, group_name + '_train_ids.txt')), group_name + '_train_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -279,7 +279,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for val_id in val_ids:
                 f.write('{}\n'.format(val_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_0_ids.txt'), group_name + '_eval_0_ids'))
+            os.path.join(out_dir, group_name + '_eval_0_ids.txt')), group_name + '_eval_0_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -287,7 +287,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for test_id in test_ids:
                 f.write('{}\n'.format(test_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_1_ids.txt'), group_name + '_eval_1_ids'))
+            os.path.join(out_dir, group_name + '_eval_1_ids.txt')), group_name + '_eval_1_ids')
 
 
 if __name__ == "__main__":
