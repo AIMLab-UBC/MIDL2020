@@ -5,6 +5,7 @@ import glob
 import json
 import random
 import argparse
+import itertools
 
 import sys
 import os.path
@@ -75,9 +76,9 @@ def group_summary(group_json):
                 total_slide_counts[patch_subtype] += 1
 
         latex_formatter(np.asarray(
-            [subtype_patient_counts[s.name] for s in SubtypeEnum]), 'Split ' + scale + ' Patient in Group ' + group_id.split('_')[-1])
+            [subtype_patient_counts[s.name] for s in SubtypeEnum]), ' Patient in Group ' + group_id.split('_')[-1])
         latex_formatter(np.asarray(
-            [subtype_patch_counts[s.name] for s in SubtypeEnum]), 'Split ' + scale + ' Patch in Group ' + group_id.split('_')[-1])
+            [subtype_patch_counts[s.name] for s in SubtypeEnum]), ' Patch in Group ' + group_id.split('_')[-1])
 
     latex_formatter(np.asarray(
         [total_slide_counts[s.name] for s in SubtypeEnum]), 'Whole Slide Image')
@@ -223,7 +224,7 @@ def create_val_test_splits(eval_ids):
     return val_ids, test_ids
 
 
-def create_train_val_test_splits(json_path, out_dir, prefix, seed):
+def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, seed):
     """Function to create training, validation and testing sets
 
     Parameters
@@ -241,56 +242,71 @@ def create_train_val_test_splits(json_path, out_dir, prefix, seed):
     -------
     None
     """
-    # TODO: Cross validation
 
     with open(json_path, 'r') as f:
         groups = json.load(f)
-    train_ids = groups['group_1']
-    val_ids, test_ids = create_val_test_splits(
-        groups['group_2'])
 
-    with open(os.path.join(out_dir, prefix + '_train_ids.txt'), 'w') as f:
-        random.seed(seed)
-        random.shuffle(train_ids)
-        for train_id in train_ids:
-            f.write('{}\n'.format(train_id))
+    for train_group in list(itertools.combinations(list(range(1, n_groups + 1)), n_train_groups)):
+        eval_group = list(set(range(1, n_groups + 1)) - set(train_group))
+        train_ids = []
+        eval_ids = []
 
-    with open(os.path.join(out_dir, prefix + '_val_ids.txt'), 'w') as f:
-        random.seed(seed)
-        random.shuffle(val_ids)
-        for val_id in val_ids:
-            f.write('{}\n'.format(val_id))
+        for train_group_idx in train_group:
+            train_ids += groups['group_' + str(train_group_idx)][:]
 
-    with open(os.path.join(out_dir, prefix + '_test_ids.txt'), 'w') as f:
-        random.seed(seed)
-        random.shuffle(test_ids)
-        for test_id in test_ids:
-            f.write('{}\n'.format(test_id))
+        for eval_group_idx in eval_group:
+            eval_ids += groups['group_' + str(eval_group_idx)][:]
+
+        val_ids, test_ids = create_val_test_splits(eval_ids)
+
+        train_group = [str(t) for t in train_group]
+        eval_group = [str(t) for t in eval_group]
+
+        group_name = '_'.join(train_group) + '_train_' + \
+            '_'.join(eval_group) + '_eval'
+
+        with open(os.path.join(out_dir, group_name + '_train_ids.txt'), 'w') as f:
+            random.seed(seed)
+            random.shuffle(train_ids)
+            for train_id in train_ids:
+                f.write('{}\n'.format(train_id))
+        latex_formatter(utils.count_subtype(
+            group_name + '_train_ids.txt'), group_name + '_train_ids')
+
+        with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
+            random.seed(seed)
+            random.shuffle(val_ids)
+            for val_id in val_ids:
+                f.write('{}\n'.format(val_id))
+        latex_formatter(utils.count_subtype(
+            group_name + '_eval_0_ids.txt'), group_name + '_eval_0_ids')
+
+        with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
+            random.seed(seed)
+            random.shuffle(test_ids)
+            for test_id in test_ids:
+                f.write('{}\n'.format(test_id))
+        latex_formatter(utils.count_subtype(
+            group_name + '_eval_1_ids.txt'), group_name + '_eval_1_ids')
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=256)
-    parser.add_argument("--n_groups", type=int, default=2)
+    parser.add_argument("--n_groups", type=int, default=3)
+    parser.add_argument("--n_train_groups", type=int, default=2)
     parser.add_argument("--patch_dir", type=str,
-                        default='/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/60_patch_ids.txt')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/patch_ids/full_patch_ids.txt')
     parser.add_argument("--out_path", type=str,
-                        default='/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/60_patient_groups.json')
-    parser.add_argument("--min_patches", type=int, default=0)
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/patch_ids/patient_group.json')
+    parser.add_argument("--min_patches", type=int, default=10)
     parser.add_argument("--max_patches", type=int, default=1000000)
     parser.add_argument("--split_dir", type=str,
-                        default='/projects/ovcare/classification/ywang/dataset/1024_gan_eval_ids/')
-    parser.add_argument("--split_prefix", type=str,
-                        default='60')
-    parser.add_argument("--scale", type=str, default='1024')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/patch_ids/')
 
     args = parser.parse_args()
 
-    for i in range(0, 3):
-        args.seed = i * 4 + 3
-        generate_groups(args.n_groups, args.patch_dir, args.out_path,
-                        args.min_patches, args.max_patches, seed=args.seed, scale=str(i))
-        create_train_val_test_splits(
-            args.out_path, args.split_dir, args.split_prefix + '_split_' + str(i), seed=args.seed)
-        utils.classification_splits_summary(
-            args.split_dir, args.split_prefix + '_split_' + str(i))
+    generate_groups(args.n_groups, args.patch_dir, args.out_path,
+                    args.min_patches, args.max_patches, seed=args.seed)
+    create_train_val_test_splits(
+        args.out_path, args.split_dir, args.n_groups, args.n_train_groups, seed=args.seed)
