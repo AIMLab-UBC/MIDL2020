@@ -40,8 +40,8 @@ main_arg.add_argument('--test_ids_file_name', type=str,
                       default='768_300_patch_ids/768_300_test_ids.txt',
                       help='Testing patch path ids')
 
-main_arg.add_argument('--distribution_output_file_name',
-                      type=str, default='a_distribution.txt')
+main_arg.add_argument('--testing_output_file_name',
+                      type=str, default='a_patch_probability.txt')
 
 main_arg.add_argument('--preload_image_file_name',
                       type=str, default='768_monoscale_300.h5')

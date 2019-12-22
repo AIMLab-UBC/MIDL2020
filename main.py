@@ -14,54 +14,6 @@ import torch
 import os
 
 
-def distribution(config):
-    patches = patch_dataset.SubtypePatchDataset(
-        config, apply_color_jitter=False)
-    print('{} mode and there are {} patches...'.format(
-        config.mode, str(len(patches))))
-
-    data_loader = torch.utils.data.DataLoader(
-        patches,
-        batch_size=config.eval_batch_size)
-    model = models.DeepModel(config, is_eval=True)
-    assert(config.eval_batch_size == 1)
-
-    with open(os.path.join(config.dataset_dir, config.distribution_output_file_name), 'w') as f:
-        prefix = config.mode + ' Epoch: '
-        n_correct = np.zeros(config.n_subtypes).astype(np.float64)
-        n_idx = np.zeros(config.n_subtypes).astype(np.float64)
-        conf_mat = np.zeros((config.n_subtypes, config.n_subtypes))
-
-        list_pred_labels = []
-        list_gt_labels = []
-        for data in tqdm(data_loader, desc=prefix):
-            cur_data, cur_label, patch_id = data
-            cur_slide_id = patch_id[0].split('/')[-2]
-            with torch.no_grad():
-                _, pred_prob, _ = model.forward(cur_data)
-                pred_label = torch.argmax(pred_prob).item()
-                n_idx[cur_label] = n_idx[cur_label] + 1.
-                list_gt_labels += [cur_label.item()]
-                list_pred_labels += [pred_label]
-                conf_mat[pred_label][cur_label] = conf_mat[pred_label][cur_label] + 1.
-                if pred_label == cur_label:
-                    n_correct[pred_label] = n_correct[pred_label] + 1.
-                # write to into distribution output file
-                pred_prob = pred_prob.cpu().numpy()
-                f.write('{}\n'.format(cur_slide_id))
-                f.write('{}\n'.format(str(pred_prob).replace('\n', '')))
-                f.write('{}\n'.format(patch_id[0]))
-                f.write('---\n')
-
-    print("Overall {} Acc: {}".format(
-        config.mode, str((n_correct.sum()/n_idx.sum()))))
-    print("Overall {} Kappa: {}".format(
-        config.mode, str(cohen_kappa_score(list_pred_labels, list_gt_labels))))
-    print('{} Acc Per Subtype: {}'.format(config.mode, str(n_correct / n_idx)))
-    print('Confusion Matrix')
-    print(repr(conf_mat))
-
-
 def evaluate(config):
     assert(config.eval_batch_size == 1)
 
@@ -81,19 +33,26 @@ def evaluate(config):
     n_idx = np.zeros(config.n_subtypes).astype(np.float64)
     conf_mat = np.zeros((config.n_subtypes, config.n_subtypes))
 
-    list_pred_labels = []
-    list_gt_labels = []
-    for data in tqdm(data_loader, desc=prefix):
-        cur_data, cur_label, orig_patch = data
-        with torch.no_grad():
-            _, pred_prob, _ = model.forward(cur_data)
-            pred_label = torch.argmax(pred_prob).item()
-            n_idx[cur_label] = n_idx[cur_label] + 1.
-            list_gt_labels += [cur_label.item()]
-            list_pred_labels += [pred_label]
-            conf_mat[pred_label][cur_label] = conf_mat[pred_label][cur_label] + 1.
-            if pred_label == cur_label:
-                n_correct[pred_label] = n_correct[pred_label] + 1.
+    with open(os.path.join(config.dataset_dir, config.mode + '_' + config.testing_output_file_name), 'w') as f:
+        list_pred_labels = []
+        list_gt_labels = []
+        for data in tqdm(data_loader, desc=prefix):
+            cur_data, cur_label, orig_patch = data
+            with torch.no_grad():
+                _, pred_prob, _ = model.forward(cur_data)
+                pred_label = torch.argmax(pred_prob).item()
+                n_idx[cur_label] = n_idx[cur_label] + 1.
+                list_gt_labels += [cur_label.item()]
+                list_pred_labels += [pred_label]
+                conf_mat[pred_label][cur_label] = conf_mat[pred_label][cur_label] + 1.
+                if pred_label == cur_label:
+                    n_correct[pred_label] = n_correct[pred_label] + 1.
+                # write to into distribution output file
+                pred_prob = pred_prob.cpu().numpy()
+                f.write('{}\n'.format(cur_slide_id))
+                f.write('{}\n'.format(str(pred_prob).replace('\n', '')))
+                f.write('{}\n'.format(patch_id[0]))
+                f.write('---\n')
 
     overall_acc = n_correct.sum()/n_idx.sum()
     overall_kappa = cohen_kappa_score(list_pred_labels, list_gt_labels)
@@ -170,8 +129,6 @@ def main(config):
         evaluate(config)
     elif config.mode == 'Testing':
         evaluate(config)
-    elif config.mode == 'Distribution':
-        distribution(config)
     else:
         raise NotImplementedError
 
