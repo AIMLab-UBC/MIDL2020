@@ -12,7 +12,7 @@ class BaseModel():
     def name(self):
         n = [self.model_name_prefix, self.deep_classifier, self.deep_model, self.optim, 'lr' +
              str(self.lr), 'bs' + str(self.batch_size), 'e' + str(self.epoch)]
-        if self.n_eval_samples != 100:
+        if self.n_eval_samples != 500:
             n += ['neval'+str(self.n_eval_samples)]
         if self.use_pretrained:
             n += ['pw']
@@ -52,7 +52,7 @@ class BaseModel():
         # set the number of evaluation samples
         if self.n_eval_samples == -1:
             # -1 means eval model on all validation set
-            cur_eval_ids = eval_data_ids
+            cur_eval_ids = eval_data_ids[:]
         else:
             # convert to numpy array for fast indexing
             eval_data_ids = np.asarray(eval_data_ids)
@@ -107,7 +107,7 @@ class BaseModel():
                 gt_list += [gt_label]
             else:
                 if pred_label == gt_label:
-                    n_correct = n_correct + 1
+                    n_correct += 1
         # set model back to train mode
         self.model.train()
         if self.use_kappa_select_model:

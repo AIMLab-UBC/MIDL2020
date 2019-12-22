@@ -114,8 +114,6 @@ main_arg.add_argument('--use_kappa_select_model', action='store_true')
 
 main_arg.add_argument('--use_equalized_batch', action='store_true')
 
-main_arg.add_argument('--use_image_input', action='store_true')
-
 main_arg.add_argument('--load_model_id', type=str,
                       default='max_val_acc')
 
