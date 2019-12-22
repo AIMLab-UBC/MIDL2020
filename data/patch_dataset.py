@@ -27,6 +27,7 @@ class SubtypePatchDataset(BaseDataset):
         # for h5 file to obtain the image data
         patch_id = utils.create_patch_id(cur_data_id)
         cur_label = utils.get_label_by_patch_id(patch_id)
+        cur_image = self.preload_images[patch_id]['image_data'][()]
         cur_image = Image.fromarray(cur_image)
         cur_tensor = preprocess.raw(
             cur_image, apply_color_jitter=self.apply_color_jitter)
