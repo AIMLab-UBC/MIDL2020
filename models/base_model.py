@@ -10,7 +10,7 @@ import torch
 
 class BaseModel():
     def name(self):
-        n = [self.model_name_prefix, self.deep_classifier, self.deep_model, self.optim, 'lr' +
+        n = [self.model_name_prefix, self.deep_classifier, self.optim, 'lr' +
              str(self.lr), 'bs' + str(self.batch_size), 'e' + str(self.epoch)]
         if self.n_eval_samples != 500:
             n += ['neval'+str(self.n_eval_samples)]
