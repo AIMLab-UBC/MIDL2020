@@ -37,7 +37,7 @@ def evaluate(config):
         list_pred_labels = []
         list_gt_labels = []
         for data in tqdm(data_loader, desc=prefix):
-            cur_data, cur_label, orig_patch = data
+            cur_data, cur_label, patch_info = data
             with torch.no_grad():
                 _, pred_prob, _ = model.forward(cur_data)
                 pred_label = torch.argmax(pred_prob).item()
@@ -49,9 +49,8 @@ def evaluate(config):
                     n_correct[pred_label] = n_correct[pred_label] + 1.
                 # write to into distribution output file
                 pred_prob = pred_prob.cpu().numpy()
-                f.write('{}\n'.format(cur_slide_id))
+                f.write('{}\n'.format(patch_info))
                 f.write('{}\n'.format(str(pred_prob).replace('\n', '')))
-                f.write('{}\n'.format(patch_id[0]))
                 f.write('---\n')
 
     overall_acc = n_correct.sum()/n_idx.sum()
