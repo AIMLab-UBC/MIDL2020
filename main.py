@@ -33,7 +33,7 @@ def evaluate(config):
     n_idx = np.zeros(config.n_subtypes).astype(np.float64)
     conf_mat = np.zeros((config.n_subtypes, config.n_subtypes))
 
-    with open(os.path.join(config.dataset_dir, config.mode + '_' + config.testing_output_file_name), 'w') as f:
+    with open(os.path.join(config.dataset_dir, 'results', config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
         list_pred_labels = []
         list_gt_labels = []
         for data in tqdm(data_loader, desc=prefix):
