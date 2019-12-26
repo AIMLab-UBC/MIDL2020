@@ -56,7 +56,7 @@ main_arg.add_argument('--count_exclude_mode', type=str,
                       default='none')
 
 main_arg.add_argument('--count_exclude_threshold', type=float,
-                      default=0.75)
+                      default=0)
 
 main_arg.add_argument('--model_name_prefix', type=str, default='')
 

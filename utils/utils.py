@@ -1,6 +1,8 @@
 from utils.subtype_enum import SubtypeEnum
 from pynvml import *
 from pathlib import Path
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import cohen_kappa_score
 import glob
 import numpy as np
 import matplotlib.path as pltPath
@@ -558,6 +560,19 @@ def prob_gap(probs):
     return largest_prob - sec_largest_prob
 
 
+def compute_acc_and_kappa(labels, preds):
+    acc = accuracy_score(labels, preds)
+    kappa = cohen_kappa_score(labels, preds)
+    print('Acc: {} Kappa: {}'.format(acc, kappa))
+
+
+def filtered_slide(slide_count_list):
+    total = 0
+    for slide_count in slide_count_list:
+        total += len(slide_count)
+    print(total)
+
+
 def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', threshold=0.99):
     """Function to parse the distribution file (i.e., the probability for each subtype)
 
@@ -595,19 +610,19 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
     """
     with open(file_path) as f:
         data_str = f.read()
+        data_str = data_str.strip()
     patch_infos = data_str.split('---\n')
-    patch_infos = patch_infos[:-1]
     # pre-allocate enough memory to store data
     probs = np.zeros((len(patch_infos), n_subtypes))
     pred_labels = np.zeros((len(patch_infos)))
     gt_labels = np.zeros((len(patch_infos)))
+    slide_ids = []
     # store class count matrix
     cls_cnt_dict = {}
     label_dict = {}
     # index of each info
-    slide_id_idx = 0
+    patch_info_idx = 0
     distribution_idx = 1
-    patch_info_idx = 2
     for idx, patch_info in enumerate(patch_infos):
         patch_info = patch_info.split('\n')
         # read distribution
@@ -625,14 +640,12 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
         if include:
             probs[idx] = prob
             # obtain ground truth label from data path
-            utils.get_label_by_patch_id(
-                patch_id)
             gt_label = np.array(get_label_by_patch_id(
-                patch_info[patch_info_idx]))
+                patch_info[patch_info_idx][2:-3]))
             pred_label = np.argmax(prob)
             pred_labels[idx] = pred_label
             gt_labels[idx] = gt_label
-            slide_id = patch_info[slide_id_idx]
+            slide_id = get_slide_by_patch_id(patch_info[patch_info_idx][2:-3])
             if slide_id not in cls_cnt_dict:
                 cls_cnt_dict[slide_id] = np.zeros(n_subtypes)
                 label_dict[slide_id] = gt_label
@@ -644,9 +657,10 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
     for idx, (slide_id, cls_cnt_arr) in enumerate(cls_cnt_dict.items()):
         cls_cnt_mat[idx] = cls_cnt_arr
         label_mat[idx] = label_dict[slide_id]
+        slide_ids += [slide_id]
     # exclude the rows contain all zero
     empty_row_idx = ~np.all(probs == 0, axis=1)
-    return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels.astype(np.int8)[empty_row_idx], pred_labels.astype(np.int8)[empty_row_idx]
+    return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels.astype(np.int8)[empty_row_idx], pred_labels.astype(np.int8)[empty_row_idx], slide_ids
 
 
 def check_duplicate_data_ids(data_ids):

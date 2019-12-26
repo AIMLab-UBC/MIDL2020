@@ -8,6 +8,9 @@ from sklearn import ensemble
 from sklearn import neighbors
 from sklearn import gaussian_process
 from sklearn import naive_bayes
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
+from sklearn.experimental import enable_hist_gradient_boosting
 from scipy.special import softmax
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import cohen_kappa_score
@@ -21,40 +24,41 @@ import joblib
 
 class CountBasedFusionModel(BaseModel):
     def name(self):
-        return self.count_fusion_model
+        return self.count_fusion_classifier
 
     def __init__(self, config):
         super().__init__(config)
-        self.count_fusion_model = config.count_fusion_model
+        self.count_fusion_classifier = config.count_fusion_classifier
         self.scaler = StandardScaler()
         self.subtype_name = [s.name for s in SubtypeEnum]
 
-        if self.count_fusion_model == 'MLP':
+        if self.count_fusion_classifier == 'MLP':
             self.classifier = neural_network.MLPClassifier(hidden_layer_sizes=(
                 200, 200, 200), activation='relu', solver='adam', max_iter=1000, learning_rate='constant', learning_rate_init=0.0002, batch_size=16, alpha=1e-5)
-        elif self.count_fusion_model == 'SVC':
+        elif self.count_fusion_classifier == 'SVC':
             # Majority Vote Acc: 0.8505070749989979 Kappa: 0.7701683081408705
             # SVC Acc: 0.8614960859880089 Kappa: 0.7855853924285369
-            # python3 count_fusion.py --count_fusion_model SVC --count_exclude_mode gap --count_exclude_threshold 0.99
-            self.classifier = svm.SVC(kernel='rbf', gamma=0.01)
-        elif self.count_fusion_model == 'ExtraTree':
+            # python3 count_fusion.py --count_fusion_classifier SVC --count_exclude_mode gap --count_exclude_threshold 0.99
+            self.classifier = svm.SVC(
+                kernel='rbf', gamma='auto', shrinking=False)
+        elif self.count_fusion_classifier == 'ExtraTree':
             self.classifier = tree.ExtraTreeClassifier(
                 criterion='entropy', class_weight='balanced', max_features='log2')
-        elif self.count_fusion_model == 'RandomForest':
+        elif self.count_fusion_classifier == 'RandomForest':
             self.classifier = ensemble.RandomForestClassifier(
                 criterion='gini', n_estimators=100, max_features='log2', class_weight='balanced')
-        elif self.count_fusion_model == 'KNeighbors':
+        elif self.count_fusion_classifier == 'KNeighbors':
             self.classifier = neighbors.KNeighborsClassifier(
                 n_neighbors=6, weights='distance', algorithm='auto')
-        elif self.count_fusion_model == 'GradientBoosting':
+        elif self.count_fusion_classifier == 'GradientBoosting':
             self.classifier = ensemble.GradientBoostingClassifier(
-                learning_rate=0.01, max_depth=3, n_estimators=100)
-        elif self.count_fusion_model == 'HistGradientBoosting':
+                learning_rate=0.001, max_depth=None, n_estimators=1000, max_leaf_nodes=4, min_samples_split=5)
+        elif self.count_fusion_classifier == 'HistGradientBoosting':
             self.classifier = ensemble.HistGradientBoostingClassifier(
                 learning_rate=0.2, loss='categorical_crossentropy', l2_regularization=0.0001)
-        elif self.count_fusion_model == 'GaussianProcess':
+        elif self.count_fusion_classifier == 'GaussianProcess':
             self.classifier = gaussian_process.GaussianProcessClassifier()
-        elif self.count_fusion_model == 'BernoulliNB':
+        elif self.count_fusion_classifier == 'BernoulliNB':
             self.classifier = naive_bayes.BernoulliNB()
         else:
             raise NotImplementedError
@@ -88,6 +92,8 @@ class CountBasedFusionModel(BaseModel):
 class DeepModel(BaseModel):
     def __init__(self, config, is_eval=False):
         super().__init__(config)
+        self.eval_images = h5py.File(os.path.join(
+            config.dataset_dir, config.preload_image_file_name), 'r')
         self.is_eval = is_eval
 
         model = getattr(torchvision.models, self.deep_classifier)

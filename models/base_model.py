@@ -44,8 +44,6 @@ class BaseModel():
         self.use_equalized_batch = config.use_equalized_batch
         self.use_kappa_select_model = config.use_kappa_select_model
         self.load_model_id = config.load_model_id
-        self.eval_images = h5py.File(os.path.join(
-            config.dataset_dir, config.preload_image_file_name), 'r')
         self.eval_data_labels = []
 
     def eval(self, eval_data_ids):
