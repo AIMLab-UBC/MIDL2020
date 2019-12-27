@@ -17,10 +17,17 @@ import utils.utils as utils
 PATIENT_REGEX = utils.PATIENT_REGEX
 
 
-def latex_formatter(counts, prefix):
+def number_formatter(counts, prefix):
     prefix = prefix.replace('_', ' ')
     print(r'{} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} \\'.format(
         prefix, int(counts[0]), int(counts[1]), int(counts[2]), int(counts[3]), int(counts[4]), int(counts.sum())))
+
+
+def percentage_formatter(counts, prefix):
+    percentages = np.asarray(counts)
+    percentages = counts / counts.sum() * 100
+    print('{} & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {} \\'.format(
+        prefix, percentages[0], percentages[1], percentages[2], percentages[3], percentages[4], int(counts.sum())) + '\\')
 
 
 def group_summary(group_json):
@@ -76,14 +83,14 @@ def group_summary(group_json):
                 slide_count_set.add(slide_id)
                 total_slide_counts[patch_subtype] += 1
 
-        latex_formatter(np.asarray(
+        number_formatter(np.asarray(
             [subtype_patient_counts[s.name] for s in SubtypeEnum]), ' Patient in Group ' + group_id.split('_')[-1])
-        latex_formatter(np.asarray(
+        number_formatter(np.asarray(
             [subtype_patch_counts[s.name] for s in SubtypeEnum]), ' Patch in Group ' + group_id.split('_')[-1])
 
-    latex_formatter(np.asarray(
+    number_formatter(np.asarray(
         [total_slide_counts[s.name] for s in SubtypeEnum]), 'Whole Slide Image')
-    latex_formatter(np.asarray(
+    number_formatter(np.asarray(
         [total_patch_counts[s.name] for s in SubtypeEnum]), 'Patch')
 
 
@@ -280,7 +287,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             random.shuffle(train_ids)
             for train_id in train_ids:
                 f.write('{}\n'.format(train_id))
-        latex_formatter(utils.count_subtype(
+        percentage_formatter(utils.count_subtype(
             os.path.join(out_dir, group_name + '_train_ids.txt')), prefix_dict[group_name + '_train_ids'])
 
         with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
@@ -288,7 +295,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             random.shuffle(val_ids)
             for val_id in val_ids:
                 f.write('{}\n'.format(val_id))
-        latex_formatter(utils.count_subtype(
+        percentage_formatter(utils.count_subtype(
             os.path.join(out_dir, group_name + '_eval_0_ids.txt')), prefix_dict[group_name + '_eval_0_ids'])
 
         with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
@@ -296,7 +303,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             random.shuffle(test_ids)
             for test_id in test_ids:
                 f.write('{}\n'.format(test_id))
-        latex_formatter(utils.count_subtype(
+        percentage_formatter(utils.count_subtype(
             os.path.join(out_dir, group_name + '_eval_1_ids.txt')), prefix_dict[group_name + '_eval_1_ids'])
 
 
