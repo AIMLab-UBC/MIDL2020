@@ -20,6 +20,7 @@ import torch
 import torchvision
 import os
 import joblib
+import h5py
 
 
 class CountBasedFusionModel(BaseModel):
