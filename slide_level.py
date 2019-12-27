@@ -11,9 +11,9 @@ import os
 
 def train(config):
     cls_cnt_mat_a, label_mat_a, _, patch_labels_a, patch_pred_a, slide_ids_a = utils.parse_distribution_file(
-        '/Users/Andy/Desktop/results/testing_a_distribution.txt', exclude_mode=config.count_exclude_mode, threshold=config.count_exclude_threshold)
+        '/Users/Andy/Desktop/results/testing_a_distribution_pw.txt', exclude_mode=config.count_exclude_mode, threshold=config.count_exclude_threshold)
     cls_cnt_mat_b, label_mat_b, _, patch_labels_b, patch_pred_b, slide_ids_b = utils.parse_distribution_file(
-        '/Users/Andy/Desktop/results/testing_b_distribution.txt', exclude_mode=config.count_exclude_mode, threshold=config.count_exclude_threshold)
+        '/Users/Andy/Desktop/results/testing_b_distribution_pw.txt', exclude_mode=config.count_exclude_mode, threshold=config.count_exclude_threshold)
     cls_cnt_mat_c, label_mat_c, _, patch_labels_c, patch_pred_c, slide_ids_c = utils.parse_distribution_file(
         '/Users/Andy/Desktop/results/testing_c_distribution_pw.txt', exclude_mode=config.count_exclude_mode, threshold=config.count_exclude_threshold)
     cls_cnt_mat_d, label_mat_d, _, patch_labels_d, patch_pred_d, slide_ids_d = utils.parse_distribution_file(

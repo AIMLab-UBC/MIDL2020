@@ -243,6 +243,15 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
     -------
     None
     """
+    prefix_dict = {'1_2_train_3_eval_train_ids': 'A/B Training',
+                   '1_2_train_3_eval_eval_0_ids': 'A/B Validation/Testing 0',
+                   '1_2_train_3_eval_eval_1_ids': 'A/B Validation/Testing 1',
+                   '1_3_train_2_eval_train_ids': 'C/D Training',
+                   '1_3_train_2_eval_eval_0_ids': 'C/D Validation/Testing 0',
+                   '1_3_train_2_eval_eval_1_ids': 'C/D Validation/Testing 1',
+                   '2_3_train_1_eval_train_ids': 'E/F Training',
+                   '2_3_train_1_eval_eval_0_ids': 'E/F Validation/Testing 0',
+                   '2_3_train_1_eval_eval_1_ids': 'E/F Validation/Testing 1'}
 
     with open(json_path, 'r') as f:
         groups = json.load(f)
@@ -272,7 +281,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for train_id in train_ids:
                 f.write('{}\n'.format(train_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_train_ids.txt')), group_name + '_train_ids')
+            os.path.join(out_dir, group_name + '_train_ids.txt')), prefix_dict[group_name + '_train_ids'])
 
         with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -280,7 +289,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for val_id in val_ids:
                 f.write('{}\n'.format(val_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_0_ids.txt')), group_name + '_eval_0_ids')
+            os.path.join(out_dir, group_name + '_eval_0_ids.txt')), prefix_dict[group_name + '_eval_0_ids'])
 
         with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
             random.seed(seed)
@@ -288,7 +297,7 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             for test_id in test_ids:
                 f.write('{}\n'.format(test_id))
         latex_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_1_ids.txt')), group_name + '_eval_1_ids')
+            os.path.join(out_dir, group_name + '_eval_1_ids.txt')), prefix_dict[group_name + '_eval_1_ids'])
 
 
 if __name__ == "__main__":
