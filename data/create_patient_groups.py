@@ -306,7 +306,7 @@ if __name__ == "__main__":
     parser.add_argument("--n_groups", type=int, default=3)
     parser.add_argument("--n_train_groups", type=int, default=2)
     parser.add_argument("--patch_dir", type=str,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/new_ids/full_patch_ids.txt')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/768_monoscale_ids/full_patch_ids.txt')
     parser.add_argument("--out_path", type=str,
                         default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/new_ids/patient_group.json')
     parser.add_argument("--min_patches", type=int, default=10)
