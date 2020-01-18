@@ -36,7 +36,7 @@ def evaluate(config):
     with open(os.path.join(config.dataset_dir, 'results', config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
         list_pred_labels = []
         list_gt_labels = []
-        for data in tqdm(data_loader, desc=prefix):
+        for data in tqdm(data_loader, desc=prefix, dynamic_ncols=True):
             cur_data, cur_label, patch_info = data
             with torch.no_grad():
                 _, pred_prob, _ = model.forward(cur_data)
@@ -88,7 +88,7 @@ def train(config):
     intv_loss = 0
     for epoch in range(config.epoch):
         prefix = 'Training Epoch {:3d}: '.format(epoch)
-        for data in tqdm(data_loader, desc=prefix):
+        for data in tqdm(data_loader, desc=prefix, dynamic_ncols=True):
             iter_idx += 1
 
             train_data, train_labels, orig_patch = data

@@ -17,7 +17,7 @@ main_arg.add_argument('--mode', type=str,
                       help='Running mode')
 
 main_arg.add_argument('--save_dir', type=str,
-                      default='/projects/ovcare/classification/ywang/project_save/midl_768_monoscale_save/',
+                      default='./',
                       help='Save model weights')
 
 main_arg.add_argument('--log_dir', type=str,
@@ -50,13 +50,13 @@ main_arg.add_argument('--deep_classifier', type=str,
                       default='vgg19_bn')
 
 main_arg.add_argument('--count_fusion_classifier', type=str,
-                      default='KNeighbors')
+                      default='RandomForest')
 
 main_arg.add_argument('--count_exclude_mode', type=str,
-                      default='none')
+                      default='gap')
 
 main_arg.add_argument('--count_exclude_threshold', type=float,
-                      default=0)
+                      default=0.8)
 
 main_arg.add_argument('--model_name_prefix', type=str, default='')
 

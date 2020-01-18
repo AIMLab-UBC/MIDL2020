@@ -3,6 +3,10 @@ from pynvml import *
 from pathlib import Path
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix
 import glob
 import numpy as np
 import matplotlib.path as pltPath
@@ -16,6 +20,40 @@ import h5py
 import json
 
 PATIENT_REGEX = re.compile(r"^[A-Z]*-?(\d*).*\(?.*\)?.*$")
+
+
+def parse_patch_level_info(split_a_file_path, split_b_file_path, split_c_file_path, split_d_file_path, split_e_file_path, split_f_file_path, exclude_mode='gap', exclude_threshold=0.8):
+    # parse the patch level results
+    cls_cnt_mat_a, label_mat_a, patch_prob_a, patch_labels_a, patch_pred_a, slide_ids_a = parse_distribution_file(
+        split_a_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    cls_cnt_mat_b, label_mat_b, patch_prob_b, patch_labels_b, patch_pred_b, slide_ids_b = parse_distribution_file(
+        split_b_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    cls_cnt_mat_c, label_mat_c, patch_prob_c, patch_labels_c, patch_pred_c, slide_ids_c = parse_distribution_file(
+        split_c_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    cls_cnt_mat_d, label_mat_d, patch_prob_d, patch_labels_d, patch_pred_d, slide_ids_d = parse_distribution_file(
+        split_d_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    cls_cnt_mat_e, label_mat_e, patch_prob_e, patch_labels_e, patch_pred_e, slide_ids_e = parse_distribution_file(
+        split_e_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    cls_cnt_mat_f, label_mat_f, patch_prob_f, patch_labels_f, patch_pred_f, slide_ids_f = parse_distribution_file(
+        split_f_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
+    # create a list of class count matrix from different splits
+    cls_cnt_mats = [cls_cnt_mat_a, cls_cnt_mat_b, cls_cnt_mat_c,
+                    cls_cnt_mat_d, cls_cnt_mat_e, cls_cnt_mat_f]
+    # create a list of label for each slide from different splits
+    label_mats = [label_mat_a, label_mat_b, label_mat_c,
+                  label_mat_d, label_mat_e, label_mat_f]
+    # concat patch-level information
+    patch_labels = patch_labels_a.tolist() + patch_labels_b.tolist() + patch_labels_c.tolist() + \
+        patch_labels_d.tolist() + patch_labels_e.tolist() + patch_labels_f.tolist()
+    patch_preds = patch_pred_a.tolist() + patch_pred_b.tolist() + patch_pred_c.tolist() + \
+        patch_pred_d.tolist() + patch_pred_e.tolist() + patch_pred_f.tolist()
+    patch_probs = np.vstack(
+        [patch_prob_a, patch_prob_b, patch_prob_c, patch_prob_d, patch_prob_e, patch_prob_f])
+    # concat slide ids
+    slide_ids = [slide_ids_a] + [slide_ids_b] + [slide_ids_c] + \
+        [slide_ids_d] + [slide_ids_e] + [slide_ids_f]
+
+    return cls_cnt_mats, label_mats, patch_labels, patch_preds, patch_probs, slide_ids
 
 
 def make_subtype_dirs(dataset_dir):
@@ -267,7 +305,7 @@ def count_subtype(input_src, n_subtypes=5):
     return count_per_subtype
 
 
-def get_label_by_patch_id(patch_id):
+def get_label_by_patch_id(patch_id, is_multiscale=False):
     """Function to obtain label from patch id
 
     Parameters
@@ -282,13 +320,13 @@ def get_label_by_patch_id(patch_id):
         Integer label from SubtypeEnum
 
     """
-    label_idx = -3
+    label_idx = -3 if not is_multiscale else -4
     label = patch_id.split('/')[label_idx]
     label = SubtypeEnum[label.upper()]
     return label.value
 
 
-def get_slide_by_patch_id(patch_id):
+def get_slide_by_patch_id(patch_id, is_multiscale=False):
     """Function to obtain slide id from patch id
 
     Parameters
@@ -303,7 +341,7 @@ def get_slide_by_patch_id(patch_id):
         Slide id extracted from `patch_id`
 
     """
-    slide_idx = -2
+    slide_idx = -2 if not is_multiscale else -3
     slide_id = patch_id.split('/')[slide_idx]
     return slide_id
 
@@ -560,17 +598,29 @@ def prob_gap(probs):
     return largest_prob - sec_largest_prob
 
 
-def compute_acc_and_kappa(labels, preds):
-    acc = accuracy_score(labels, preds)
-    kappa = cohen_kappa_score(labels, preds)
-    print('Acc: {} Kappa: {}'.format(acc, kappa))
+def compute_metric(labels, preds, probs=None):
+    overall_acc = accuracy_score(labels, preds)
+    overall_kappa = cohen_kappa_score(labels, preds)
+    overall_f1 = f1_score(labels, preds, average='macro')
+    conf_mat = confusion_matrix(labels, preds).T
+    acc_per_subtype = conf_mat.diagonal()/conf_mat.sum(axis=0)
+    if not (probs is None):
+        overall_auc = roc_auc_score(
+            labels, probs, multi_class='ovo', average='macro')
+
+    print('Overall Acc: {:.2f}\%'.format(overall_acc * 100))
+    print('Overall Kappa: {:.4f}'.format(overall_kappa))
+    print('Overall F1: {:.4f}'.format(overall_f1))
+    if not (probs is None):
+        print('Overall AUC: {:.4f}'.format(overall_auc))
+    print_per_class_accuracy(acc_per_subtype)
 
 
-def filtered_slide(slide_count_list):
+def count_n_slides(slide_count_list):
     total = 0
     for slide_count in slide_count_list:
         total += len(slide_count)
-    print(total)
+    return total
 
 
 def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', threshold=0.99):
@@ -627,7 +677,7 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
         patch_info = patch_info.split('\n')
         # read distribution
         prob = np.fromstring(
-            patch_info[distribution_idx][2:-2], count=n_subtypes, sep=' ')
+            patch_info[distribution_idx][1:-1], count=n_subtypes, sep=' ')
         if exclude_mode == 'gap':
             include = prob_gap(prob) > threshold
         elif exclude_mode == 'var':
@@ -640,12 +690,13 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
         if include:
             probs[idx] = prob
             # obtain ground truth label from data path
-            gt_label = np.array(get_label_by_patch_id(
-                patch_info[patch_info_idx][2:-3]))
+            gt_label = np.asarray(get_label_by_patch_id(
+                patch_info[patch_info_idx], is_multiscale=True))
             pred_label = np.argmax(prob)
             pred_labels[idx] = pred_label
             gt_labels[idx] = gt_label
-            slide_id = get_slide_by_patch_id(patch_info[patch_info_idx][2:-3])
+            slide_id = get_slide_by_patch_id(
+                patch_info[patch_info_idx], is_multiscale=True)
             if slide_id not in cls_cnt_dict:
                 cls_cnt_dict[slide_id] = np.zeros(n_subtypes)
                 label_dict[slide_id] = gt_label
@@ -660,7 +711,10 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
         slide_ids += [slide_id]
     # exclude the rows contain all zero
     empty_row_idx = ~np.all(probs == 0, axis=1)
-    return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels.astype(np.int8)[empty_row_idx], pred_labels.astype(np.int8)[empty_row_idx], slide_ids
+    gt_labels = gt_labels.astype(np.int8)[empty_row_idx]
+    pred_labels = pred_labels.astype(np.int8)[empty_row_idx]
+    #print(classification_report(gt_labels, pred_labels, labels=[s.value for s in SubtypeEnum], target_names=[s.name for s in SubtypeEnum]))
+    return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels, pred_labels, slide_ids
 
 
 def check_duplicate_data_ids(data_ids):
@@ -702,19 +756,7 @@ def extract_patient_ids(slide_ids):
     return patient_ids
 
 
-def classification_splits_summary(ids_dir, prefix):
-    def _print_summary(counts, prefix):
-        percentages = np.asarray(counts)
-        percentages = counts / counts.sum() * 100
-        print('{} & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {} \\'.format(
-            prefix, percentages[0], percentages[1], percentages[2], percentages[3], percentages[4], int(counts.sum())) + '\\')
-
-    counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_train_ids.txt'))
-    _print_summary(counts, 'Training Set')
-    counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_val_ids.txt'))
-    _print_summary(counts, 'Validation Set')
-    counts = count_subtype(os.path.join(
-        ids_dir, prefix + '_test_ids.txt'))
-    _print_summary(counts, 'Testing Set')
+def print_per_class_accuracy(per_class_acc):
+    per_class_acc = per_class_acc * 100
+    print('& {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(
+        per_class_acc[0], per_class_acc[1], per_class_acc[2], per_class_acc[3], per_class_acc[4]))

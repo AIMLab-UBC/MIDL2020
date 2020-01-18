@@ -32,6 +32,7 @@ class CountBasedFusionModel(BaseModel):
         self.count_fusion_classifier = config.count_fusion_classifier
         self.scaler = StandardScaler()
         self.subtype_name = [s.name for s in SubtypeEnum]
+        self.robust_scaler = preprocessing.RobustScaler()
 
         if self.count_fusion_classifier == 'MLP':
             self.classifier = neural_network.MLPClassifier(hidden_layer_sizes=(
@@ -46,8 +47,9 @@ class CountBasedFusionModel(BaseModel):
             self.classifier = tree.ExtraTreeClassifier(
                 criterion='entropy', class_weight='balanced', max_features='log2')
         elif self.count_fusion_classifier == 'RandomForest':
+            # random_state=3242
             self.classifier = ensemble.RandomForestClassifier(
-                criterion='gini', n_estimators=100, max_features='log2', class_weight='balanced')
+                criterion='gini', n_estimators=100, max_features='log2', class_weight='balanced', random_state=3242)
         elif self.count_fusion_classifier == 'KNeighbors':
             self.classifier = neighbors.KNeighborsClassifier(
                 n_neighbors=6, weights='distance', algorithm='auto')
@@ -68,7 +70,8 @@ class CountBasedFusionModel(BaseModel):
         preds = self.classifier.predict(cls_cnt_mat)
         acc = accuracy_score(labels, preds)
         kappa = cohen_kappa_score(labels, preds)
-        return preds, acc, kappa
+        probs = self.classifier.predict_proba(cls_cnt_mat)
+        return preds, acc, kappa, probs
 
     def optimize_parameters(self, cls_cnt_mat, labels):
         self.classifier = self.classifier.fit(cls_cnt_mat, labels)
@@ -81,11 +84,19 @@ class CountBasedFusionModel(BaseModel):
         joblib.dump(state, os.path.join(self.save_dir,
                                         '_'.join([self.name(), model_id]) + '.sav'))
 
+    def load(self, model_id):
+        state = joblib.load(model_id)
+        self.classifier = state['model']
+        self.scaler = state['scaler']
+
     def preprocess(self, data, is_eval=False):
-        data = softmax(data, axis=1)
+        #data = softmax(data, axis=1)
+        #data = preprocessing.normalize(data, norm='l2')
         if is_eval:
+            data = self.robust_scaler.transform(data)
             data = self.scaler.transform(data)
         else:
+            data = self.robust_scaler.fit_transform(data)
             data = self.scaler.fit_transform(data)
         return data
 
