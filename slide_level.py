@@ -84,15 +84,18 @@ def main(config):
         model.save(chr(97 + split_id))
         # report current model and majority vote accuracy and kappa
         print('----- Majority Vote Split {} --------'.format(chr(97 + split_id)))
-        utils.compute_metric(test_label_mat, cur_majority_vote_labels)
+        utils.compute_metric(
+            test_label_mat, cur_majority_vote_labels, verbose=True)
         print('----- Model Split {} --------'.format(chr(97 + split_id)))
-        utils.compute_metric(test_label_mat, cur_model_preds, cur_model_probs)
+        utils.compute_metric(test_label_mat, cur_model_preds,
+                             cur_model_probs, verbose=True)
     # report overall metric for model and majority vote
     print('------------ Majoirty Vote Slide-Level Weighted Performance -------------')
-    utils.compute_metric(slide_labels, majority_vote_preds_slide_labels)
+    utils.compute_metric(
+        slide_labels, majority_vote_preds_slide_labels, verbose=True)
     print('------------ Model Slide-Level Weighted Performance -------------')
     utils.compute_metric(
-        slide_labels, model_preds_slide_labels, model_preds_slide_prob)
+        slide_labels, model_preds_slide_labels, model_preds_slide_prob, verbose=True)
 
 
 if __name__ == '__main__':
