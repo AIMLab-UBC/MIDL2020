@@ -4,8 +4,6 @@ from sklearn import ensemble
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from scipy.special import softmax
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import cohen_kappa_score
 import utils.utils as utils
 import numpy as np
 import torch

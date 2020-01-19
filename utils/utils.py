@@ -618,7 +618,7 @@ def compute_metric(labels, preds, probs=None):
     if not (probs is None):
         return overall_acc, overall_kappa, overall_f1, overall_auc
     else:
-        return overall_acc, overall_kappa, overall_f1
+        return overall_acc, overall_kappa, overall_f1, None
 
 
 def count_n_slides(slide_count_list):
