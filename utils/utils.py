@@ -615,6 +615,11 @@ def compute_metric(labels, preds, probs=None):
         print('Overall AUC: {:.4f}'.format(overall_auc))
     print_per_class_accuracy(acc_per_subtype)
 
+    if not (probs is None):
+        return overall_acc, overall_kappa, overall_f1, overall_auc
+    else:
+        return overall_acc, overall_kappa, overall_f1
+
 
 def count_n_slides(slide_count_list):
     total = 0
@@ -713,7 +718,6 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
     empty_row_idx = ~np.all(probs == 0, axis=1)
     gt_labels = gt_labels.astype(np.int8)[empty_row_idx]
     pred_labels = pred_labels.astype(np.int8)[empty_row_idx]
-    #print(classification_report(gt_labels, pred_labels, labels=[s.value for s in SubtypeEnum], target_names=[s.name for s in SubtypeEnum]))
     return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels, pred_labels, slide_ids
 
 

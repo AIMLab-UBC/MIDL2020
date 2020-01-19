@@ -1,9 +1,7 @@
 from config import get_config, print_usage
-from utils.subtype_enum import SubtypeEnum
 import utils.utils as utils
 import models.models as models
 import numpy as np
-import os
 
 
 def main(config):
@@ -19,7 +17,7 @@ def main(config):
     )
     # compute the number of slides used
     n_slides = utils.count_n_slides(cls_cnt_mats)
-    print('{} whole slide images are included'.format(n_slides))
+    print('{} WSIs are included'.format(n_slides))
     print('{} patches are included'.format(len(patch_preds)))
     # compute patch-level matric
     print('------------ Patch-Level -------------')
@@ -72,9 +70,8 @@ def main(config):
         # optimize slide-level model weights
         model.optimize_parameters(
             preprocessed_train_cls_cnt_mat, train_label_mat)
-        # model.load('./slide_models/RandomForest_' +chr(97 + split_id) + '.sav')
         # compute current split model accuracy and kappa
-        cur_model_preds, model_acc, model_kappa, cur_model_probs = model.forward(
+        cur_model_preds, cur_model_probs, model_acc, model_kappa, model_f1, model_auc = model.forward(
             preprocessed_test_cls_cnt_mat, test_label_mat)
         # store model predicted probability and predicted labels
         model_preds_slide_prob = np.vstack(
