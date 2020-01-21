@@ -46,9 +46,6 @@ main_arg.add_argument('--testing_output_file_name',
 main_arg.add_argument('--preload_image_file_name',
                       type=str, default='768_monoscale.h5')
 
-main_arg.add_argument('--deep_classifier', type=str,
-                      default='vgg19_bn')
-
 main_arg.add_argument('--count_fusion_classifier', type=str,
                       default='RandomForest')
 
@@ -102,15 +99,20 @@ main_arg.add_argument('--n_eval_samples', type=int,
 main_arg.add_argument('--n_subtypes', type=int,
                       default=5)
 
+main_arg.add_argument('--expert_magnification', type=int,
+                      default=512)
+
 main_arg.add_argument('--optim', type=str, default='Adam')
+
+main_arg.add_argument('--deep_model', type=str, default='DeepModel')
+
+main_arg.add_argument('--deep_classifier', type=str, default='baseline')
 
 main_arg.add_argument('--continue_train', action='store_true')
 
-main_arg.add_argument('--log_patches', action='store_true')
+main_arg.add_argument('--is_multiscale_expert', action='store_true')
 
 main_arg.add_argument('--use_pretrained', action='store_true')
-
-main_arg.add_argument('--use_kappa_select_model', action='store_true')
 
 main_arg.add_argument('--use_equalized_batch', action='store_true')
 

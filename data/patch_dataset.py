@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 
-class SubtypePatchDataset(BaseDataset):
+class PatchDataset(BaseDataset):
     def __init__(self, config, apply_color_jitter=True):
         super().__init__(config)
         self.apply_color_jitter = apply_color_jitter
@@ -21,7 +21,6 @@ class SubtypePatchDataset(BaseDataset):
             cur_data_id = np.random.choice(self.cur_data_ids[label_idx])
         else:
             cur_data_id = self.cur_data_ids[index]
-
         # create patch id by stripping the image extension
         # and only obtain `/subtype/slide_id/image_location` format
         # for h5 file to obtain the image data
@@ -31,5 +30,5 @@ class SubtypePatchDataset(BaseDataset):
         cur_image = Image.fromarray(cur_image)
         cur_tensor = preprocess.raw(
             cur_image, apply_color_jitter=self.apply_color_jitter)
-        cur_label = torch.tensor(cur_label).type(torch.LongTensor).cuda()
-        return (cur_tensor, ), cur_label, patch_id
+        cur_label = torch.tensor(cur_label).type(torch.long).cuda()
+        return cur_tensor, cur_label, patch_id

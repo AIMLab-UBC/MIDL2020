@@ -4,7 +4,10 @@ from config import get_config, print_usage
 from tqdm import tqdm
 from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
 import models.models as models
 import numpy as np
 import utils.utils as utils
@@ -15,58 +18,59 @@ import os
 
 
 def evaluate(config):
-    assert(config.eval_batch_size == 1)
+    patches = patch_dataset.PatchDataset(config, apply_color_jitter=False)
 
-    patches = patch_dataset.SubtypePatchDataset(
-        config, apply_color_jitter=False)
     print('{} mode and there are {} patches...'.format(
         config.mode, str(len(patches))))
 
     data_loader = torch.utils.data.DataLoader(
         patches,
-        batch_size=config.eval_batch_size)
+        batch_size=config.batch_size)
 
-    model = models.DeepModel(config, is_eval=True)
+    model = models.DeepModel(config, is_eval=False)
 
     prefix = config.mode + ' Epoch: '
-    n_correct = np.zeros(config.n_subtypes).astype(np.float64)
-    n_idx = np.zeros(config.n_subtypes).astype(np.float64)
-    conf_mat = np.zeros((config.n_subtypes, config.n_subtypes))
 
-    with open(os.path.join(config.dataset_dir, 'results', config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
-        list_pred_labels = []
-        list_gt_labels = []
+    pred_labels = []
+    gt_labels = []
+    pred_probs = np.array([]).reshape(0, config.n_subtypes)
+    with open(os.path.join(config.dataset_dir, config.testing_output_dir_name, config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
         for data in tqdm(data_loader, desc=prefix, dynamic_ncols=True):
-            cur_data, cur_label, patch_info = data
+            cur_data, cur_label, patch_infos = data
             with torch.no_grad():
-                _, pred_prob, _ = model.forward(cur_data)
-                pred_label = torch.argmax(pred_prob).item()
-                n_idx[cur_label] = n_idx[cur_label] + 1.
-                list_gt_labels += [cur_label.item()]
-                list_pred_labels += [pred_label]
-                conf_mat[pred_label][cur_label] = conf_mat[pred_label][cur_label] + 1.
-                if pred_label == cur_label:
-                    n_correct[pred_label] = n_correct[pred_label] + 1.
+                _, pred_prob = model.forward(cur_data)
+                pred_labels += torch.argmax(pred_prob,
+                                            dim=1).cpu().numpy().tolist()
+                gt_labels += cur_label.cpu().numpy().tolist()
                 # write to into distribution output file
                 pred_prob = pred_prob.cpu().numpy()
-                f.write('{}\n'.format(patch_info))
-                f.write('{}\n'.format(str(pred_prob).replace('\n', '')))
-                f.write('---\n')
+                pred_probs = np.vstack((pred_probs, pred_prob))
+                for idx, patch_info in enumerate(patch_infos):
+                    f.write('{}\n'.format(patch_info))
+                    f.write('{}\n'.format(
+                        str(pred_prob[idx]).replace('\n', '')))
+                    f.write('---\n')
 
-    overall_acc = n_correct.sum()/n_idx.sum()
-    overall_kappa = cohen_kappa_score(list_pred_labels, list_gt_labels)
-    acc_per_subype = n_correct / n_idx
+    overall_acc = accuracy_score(gt_labels, pred_labels)
+    overall_kappa = cohen_kappa_score(pred_labels, gt_labels)
+    overall_auc_roc_score = roc_auc_score(
+        gt_labels, pred_probs, average='macro', multi_class='ovo')
+    conf_mat = confusion_matrix(gt_labels, pred_labels).T
+    acc_per_subtype = conf_mat.diagonal()/conf_mat.sum(axis=0)
     print("Overall {} Acc: {}".format(config.mode, str(overall_acc)))
     print("Overall {} Kappa: {}".format(config.mode, str(overall_kappa)))
-    print('{} Acc Per Subtype: {}'.format(config.mode, str(acc_per_subype)))
+    print("Overall {} AUC ROC {}".format(
+        config.mode, str(overall_auc_roc_score)))
+    print('{} Acc Per Subtype: {}'.format(config.mode, str(acc_per_subtype)))
     print('Confusion Matrix')
     print(repr(conf_mat))
     print('--- Latex Table Format ---')
-    utils.latex_table_formatter(acc_per_subype, overall_acc, overall_kappa)
+    utils.test_result_latex_formatter(
+        acc_per_subtype, overall_acc, overall_kappa)
 
 
 def train(config):
-    patches = patch_dataset.SubtypePatchDataset(config)
+    patches = patch_dataset.PatchDataset(config)
 
     print('{} mode and there are {} patches...'.format(
         config.mode, str(len(patches))))
@@ -92,10 +96,8 @@ def train(config):
             iter_idx += 1
 
             train_data, train_labels, orig_patch = data
-
-            pred_labels_logits, pred_labels_probs, output = model.forward(
-                train_data)
-            model.optimize_parameters(pred_labels_logits, train_labels, output)
+            pred_labels_logits, pred_labels_probs = model.forward(train_data)
+            model.optimize_parameters(pred_labels_logits, train_labels)
 
             intv_loss += model.get_current_errors()
 

@@ -22,10 +22,10 @@ def main(config):
     # compute patch-level matric
     print('------------ Patch-Level -------------')
     utils.compute_metric(patch_labels, patch_preds, patch_probs)
-    # splits
+    # combination of each split
     combinations = [[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 5, 4], [0, 1, 4, 5, 2, 3], [
         0, 1, 4, 5, 3, 2], [2, 3, 4, 5, 0, 1], [2, 3, 4, 5, 1, 0]]
-    # place holder to store data
+    # place holders to store data
     slide_labels = np.array([])
     majority_vote_preds_slide_labels = np.array([])
     model_preds_slide_labels = np.array([])

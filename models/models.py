@@ -4,6 +4,7 @@ from sklearn import ensemble
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from scipy.special import softmax
+import models.networks as networks
 import utils.utils as utils
 import numpy as np
 import torch
@@ -65,47 +66,33 @@ class DeepModel(BaseModel):
             config.dataset_dir, config.preload_image_file_name), 'r')
         self.is_eval = is_eval
 
-        model = getattr(torchvision.models, self.deep_classifier)
-        if 'res' in self.deep_classifier:
-            model = model(pretrained=self.use_pretrained)
-            num_ftrs = model.fc.in_features
-            model.fc = torch.nn.Linear(num_ftrs, self.config.n_subtypes)
-        elif 'vgg' in self.deep_classifier:
-            model = model(pretrained=self.use_pretrained)
-            model.classifier._modules['6'] = torch.nn.Linear(
-                4096, self.n_subtypes)
-        elif self.deep_classifier == 'alexnet':
-            model = model(pretrained=self.use_pretrained)
-            model.classifier._modules['6'] = torch.nn.Linear(
-                4096, self.n_subtypes)
-        elif 'densenet' in self.deep_classifier:
-            model = model(num_classes=self.n_subtypes,
-                          pretrained=self.use_pretrained)
-        elif 'mobilenet' in self.deep_classifier:
-            model = model(num_classes=self.n_subtypes,
-                          pretrained=self.use_pretrained)
+        if self.deep_classifier.lower() == 'baseline':
+            self.model = networks.Baseline(
+                num_classes=self.n_subtypes, use_pretrained=self.use_pretrained)
+        elif self.deep_classifier.lower() == 'multi_stage':
+            load_name = self.name()
+            if self.expert_magnification == '512':
+                prior_scale = str(int(self.expert_magnification) // 2)
+                prior_batch_size = self.batch_size * 2
+                load_name = load_name.replace('mscale_exp_' + self.expert_magnification, 'mscale_exp_' +
+                                              prior_scale).replace('bs' + str(self.batch_size), 'bs' + str(prior_batch_size))
+
+            self.model = networks.MultiStage(num_classes=self.n_subtypes,
+                                             use_pretrained=self.use_pretrained,
+                                             progressive_size=int(
+                                                 self.expert_magnification),
+                                             weights_save_path=os.path.join(self.save_dir, load_name + '_' + self.load_model_id + '.pth'))
         else:
             raise NotImplementedError
-        self.model = model.cuda()
+        # use cuda
+        self.model.cuda()
 
         if not self.is_eval:
             self.criterion = torch.nn.CrossEntropyLoss(reduction='mean')
 
-        if self.optim == 'SGD':
-            self.optimizer = torch.optim.SGD(
-                self.model.parameters(), lr=self.lr, momentum=self.momentum)
-        elif self.optim == 'Adam':
+        if self.optim == 'Adam':
             self.optimizer = torch.optim.Adam(
                 self.model.parameters(), lr=self.lr, weight_decay=self.l2_decay)
-        elif self.optim == 'Adamax':
-            self.optimizer = torch.optim.Adamax(
-                self.model.parameters(), lr=self.lr)
-        elif self.optim == 'AdamW':
-            self.optimizer = torch.optim.Adamax(
-                self.model.parameters(), lr=self.lr)
-        elif self.optim == 'RMSprop':
-            self.optimizer = torch.optim.RMSprop(
-                self.model.parameters(), lr=self.lr)
         else:
             raise NotImplementedError
 
@@ -118,14 +105,6 @@ class DeepModel(BaseModel):
             self.model.eval()
 
     def forward(self, x):
-        output = self.model.forward(*x)
-        if type(output).__name__ == 'GoogLeNetOutputs':
-            # GoogLeNet output has one logit and two auxiliary logit
-            logits = output.logits
-        elif type(output).__name__ == 'InceptionOutputs':
-            # Inception output has one logit and one auxiliary logit
-            logits = output.logits
-        else:
-            logits = output
+        logits = self.model.forward(x)
         probs = torch.softmax(logits, dim=1)
-        return logits, probs, output
+        return logits, probs
