@@ -607,15 +607,15 @@ def compute_metric(labels, preds, probs=None, verbose=False):
     if not (probs is None):
         overall_auc = roc_auc_score(
             labels, probs, multi_class='ovo', average='macro')
-
+    # disply results
     if verbose:
-        print('Overall Acc: {:.2f}\%'.format(overall_acc * 100))
-        print('Overall Kappa: {:.4f}'.format(overall_kappa))
-        print('Overall F1: {:.4f}'.format(overall_f1))
+        print('Acc: {:.2f}\%'.format(overall_acc * 100))
+        print('Kappa: {:.4f}'.format(overall_kappa))
+        print('F1: {:.4f}'.format(overall_f1))
         if not (probs is None):
-            print('Overall AUC: {:.4f}'.format(overall_auc))
+            print('AUC ROC: {:.4f}'.format(overall_auc))
         print_per_class_accuracy(acc_per_subtype)
-
+    # return results
     if not (probs is None):
         return overall_acc, overall_kappa, overall_f1, overall_auc
     else:

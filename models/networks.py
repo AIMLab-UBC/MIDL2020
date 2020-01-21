@@ -5,10 +5,13 @@ import torchvision
 class Baseline(nn.Module):
     def __init__(self, num_classes=5, use_pretrained=False):
         super(Baseline, self).__init__()
+        # init vgg19_bn
         self.cnn = torchvision.vgg19_bn(pretrained=use_pretrained)
+        # modify the last fully-connected layer
         self.cnn.classifier._modules['6'] = torch.nn.Linear(4096, num_classes)
 
     def forward(self, x):
+        # forward pass to compute logits
         logits = self.cnn(x)
         return logits
 
@@ -35,7 +38,7 @@ class MultiStage(nn.Module):
 
     def _add_conv_module(self, features, slice_idx=3):
         add_module = nn.ModuleList()
-        # conv module for progressive resizing
+        # attach two new conv blocks
         add_sequential = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=64,
                       kernel_size=3, padding=1),
@@ -48,10 +51,10 @@ class MultiStage(nn.Module):
             nn.MaxPool2d(kernel_size=2)
         )
         self._initialize_weights(add_sequential)
-        # append the new conv module
+        # append the new conv blocks
         for layer in add_sequential:
             add_module.append(layer)
-        # remove the first conv module (Conv2d, BatchNorm, ReLU)
+        # remove the first conv block
         for layer in features[slice_idx:]:
             add_module.append(layer)
         return nn.Sequential(*add_module)
@@ -60,15 +63,16 @@ class MultiStage(nn.Module):
         super(MultiStage, self).__init__()
         # backbone model
         model = torchvision.models.vgg19_bn(pretrained=use_pretrained)
+        # modify the last fully-connected layer
         model.classifier._modules['6'] = torch.nn.Linear(4096, num_classes)
-        # build progressive resizing model
+        # load weights from 256 * 256
+        # and change model for 512 * 512 input
         if progressive_size == 512:
-            # load stored weights
+            # load stored state
             state = torch.load(weights_save_path)
-            # oad previous size learned weights and discard first conv block then add new conv blocks
+            # load previous size learned weights and discard first conv block then add new conv blocks
             model.load_state_dict(state['state_dict'])
             model.features = self._add_conv_module(model.features)
-
         self.features = model.features
         self.avgpool = model.avgpool
         self.classifier = model.classifier

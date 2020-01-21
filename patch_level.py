@@ -27,8 +27,7 @@ def evaluate(config):
         patches,
         batch_size=config.batch_size)
 
-    model = models.DeepModel(config, is_eval=False)
-
+    model = models.DeepModel(config, is_eval=True)
     prefix = config.mode + ' Epoch: '
 
     pred_labels = []
@@ -51,22 +50,7 @@ def evaluate(config):
                         str(pred_prob[idx]).replace('\n', '')))
                     f.write('---\n')
 
-    overall_acc = accuracy_score(gt_labels, pred_labels)
-    overall_kappa = cohen_kappa_score(pred_labels, gt_labels)
-    overall_auc_roc_score = roc_auc_score(
-        gt_labels, pred_probs, average='macro', multi_class='ovo')
-    conf_mat = confusion_matrix(gt_labels, pred_labels).T
-    acc_per_subtype = conf_mat.diagonal()/conf_mat.sum(axis=0)
-    print("Overall {} Acc: {}".format(config.mode, str(overall_acc)))
-    print("Overall {} Kappa: {}".format(config.mode, str(overall_kappa)))
-    print("Overall {} AUC ROC {}".format(
-        config.mode, str(overall_auc_roc_score)))
-    print('{} Acc Per Subtype: {}'.format(config.mode, str(acc_per_subtype)))
-    print('Confusion Matrix')
-    print(repr(conf_mat))
-    print('--- Latex Table Format ---')
-    utils.test_result_latex_formatter(
-        acc_per_subtype, overall_acc, overall_kappa)
+    utils.compute_metric(gt_labels, pred_labels, pred_probs, verbose=True)
 
 
 def train(config):
@@ -105,7 +89,6 @@ def train(config):
                 writer.add_scalar('Training CrossEntropyLoss', intv_loss / config.rep_intv,
                                   global_step=iter_idx)
                 intv_loss = 0
-
                 val_acc = model.eval(eval_data_ids=patches.eval_data_ids)
 
                 if max_val_acc < val_acc:
@@ -114,12 +97,6 @@ def train(config):
 
                 writer.add_scalar('Validation Accuracy',
                                   val_acc, global_step=iter_idx)
-
-                if config.log_patches:
-                    concat_patches = postprocess.hori_concat_img(
-                        orig_patch.numpy().transpose(0, 3, 1, 2))
-                    writer.add_images('Patches', concat_patches,
-                                      global_step=iter_idx, dataformats='HWC')
 
 
 def main(config):

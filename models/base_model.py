@@ -13,8 +13,6 @@ class BaseModel():
     def name(self):
         n = [self.model_name_prefix, self.deep_classifier, self.deep_model, self.optim, 'lr' +
              str(self.lr), 'bs' + str(self.batch_size), 'e' + str(self.epoch)]
-        if self.filter_size != 1:
-            n += ['f'+str(self.filter_size)]
         if self.n_eval_samples != 100:
             n += ['neval'+str(self.n_eval_samples)]
         if self.use_pretrained:
@@ -28,14 +26,12 @@ class BaseModel():
 
     def __init__(self, config):
         self.config = config
-        self.deep_classifier = config.deep_classifier       # e.g., vgg19_bn, resnet50
-        self.deep_model = config.deep_model
+        self.deep_classifier = config.deep_classifier
         # avoid same hyperparameters setup result in the same name
         self.model_name_prefix = config.model_name_prefix
         self.lr = config.lr
         self.batch_size = config.batch_size
         self.epoch = config.epoch
-        self.patch_size = config.patch_size
         self.n_subtypes = config.n_subtypes
         self.save_dir = config.save_dir
         self.n_eval_samples = config.n_eval_samples
@@ -152,7 +148,7 @@ class BaseModel():
     def get_current_errors(self):
         return self.loss.item()
 
-    def optimize_parameters(self, logits, labels, output=None):
+    def optimize_parameters(self, logits, labels):
         self.loss = self.criterion(logits.type(
             torch.float), labels.type(torch.long))
         self.loss.backward()
