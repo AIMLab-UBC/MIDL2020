@@ -52,7 +52,6 @@ def parse_patch_level_info(split_a_file_path, split_b_file_path, split_c_file_pa
     # concat slide ids
     slide_ids = [slide_ids_a] + [slide_ids_b] + [slide_ids_c] + \
         [slide_ids_d] + [slide_ids_e] + [slide_ids_f]
-
     return cls_cnt_mats, label_mats, patch_labels, patch_preds, patch_probs, slide_ids
 
 
