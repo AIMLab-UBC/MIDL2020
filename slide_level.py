@@ -7,12 +7,12 @@ import numpy as np
 def main(config):
     # parse patch-level results from different splits
     cls_cnt_mats, label_mats, patch_labels, patch_preds, patch_probs, slide_ids = utils.parse_patch_level_info(
-        '/Users/Andy/Desktop/results_maestro_v2/testing_a_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_b_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_c_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_d_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_e_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_f_distribution.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_a_distribution_baseline.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_b_distribution_baseline.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_c_distribution_baseline.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_d_distribution_baseline.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_e_distribution_baseline.txt',
+        '/Users/Andy/Desktop/results_maestro_v2/testing_f_distribution_baseline.txt',
         exclude_mode=config.count_exclude_mode, exclude_threshold=config.count_exclude_threshold
     )
     # compute the number of slides used
@@ -21,7 +21,8 @@ def main(config):
     print('{} patches are included'.format(len(patch_preds)))
     # compute patch-level matric
     print('------------ Patch-Level -------------')
-    utils.compute_metric(patch_labels, patch_preds, patch_probs)
+    utils.compute_metric(patch_labels, patch_preds, patch_probs, verbose=True)
+    print('--------------------------------------')
     # combination of each split
     combinations = [[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 5, 4], [0, 1, 4, 5, 2, 3], [
         0, 1, 4, 5, 3, 2], [2, 3, 4, 5, 0, 1], [2, 3, 4, 5, 1, 0]]

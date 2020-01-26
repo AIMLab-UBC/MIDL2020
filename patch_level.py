@@ -4,15 +4,10 @@ from config import get_config, print_usage
 from tqdm import tqdm
 from PIL import Image
 from torch.utils.tensorboard import SummaryWriter
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import cohen_kappa_score
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import roc_auc_score
 import models.models as models
 import numpy as np
 import utils.utils as utils
 import data.patch_dataset as patch_dataset
-import data.postprocess as postprocess
 import torch
 import os
 

@@ -76,30 +76,6 @@ def make_subtype_dirs(dataset_dir):
             os.makedirs(subtype_dir)
 
 
-def latex_table_formatter(acc_per_subtype, overall_acc, overall_kappa):
-    """Function to format the validation / testing results for LaTeX docs
-
-    Parameters
-    ----------
-    acc_per_subtype : array_like (float)
-        Accuracy for each subtype, index by SubtypeEnum
-
-    overall_acc : float
-        Overall accuracy
-
-    overall_kappa : float
-        Overall kappa
-
-    Returns
-    -------
-    None
-    Print the LaTex format: & {CC} & {LGSC} & {EC} & {MC} & {HGSC} & {Accuracy} & {Kappa}
-    """
-    acc_per_subtype = np.asarray(acc_per_subtype) * 100
-    print('& {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.4f} \\'.format(
-        acc_per_subtype[0], acc_per_subtype[1], acc_per_subtype[2], acc_per_subtype[3], acc_per_subtype[4], overall_acc * 100, overall_kappa) + '\\')
-
-
 def exclude_slides_without_annotations(slides, annotations):
     """Function to exclude the whole slide images (*.tiff) that do not have annotations (*.txt)
 
@@ -242,29 +218,6 @@ def create_patch_id(path):
     patch_id = strip_extension(path).split('/')[label_idx:]
     patch_id = '/'.join(patch_id)
     return patch_id
-
-
-def create_multiscale_ids(patch_id):
-    """Function to create multiscale patch ids
-
-    Parameters
-    ----------
-    patch_id : string
-        For multiscale patch, patch id has format: /subtype/slide_id/magnification/patch_location
-
-    Returns
-    -------
-    patch_20x_id, patch_10x_id, patch_5x_id : string, string, string
-        Three magnification patch ids for reading image data from h5
-    """
-    patch_info = patch_id.split('/')
-    patch_info[-2] = '20'
-    patch_20x_id = '/'.join(patch_info)
-    patch_info[-2] = '10'
-    patch_10x_id = '/'.join(patch_info)
-    patch_info[-2] = '5'
-    patch_5x_id = '/'.join(patch_info)
-    return patch_20x_id, patch_10x_id, patch_5x_id
 
 
 def count_subtype(input_src, n_subtypes=5):
@@ -424,93 +377,6 @@ def set_gpus(n_gpus, verbose=False):
     print("Using GPU {}".format(','.join([str(s) for s in selected_gpu])))
     os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(
         [str(s) for s in selected_gpu])
-
-
-def create_patch_ids_by_slide(patch_ids):
-    """Function to create patch ids sorted by slide ids
-
-    Parameters
-    ----------
-    patch_ids : list
-        List of patch ids
-
-    Returns
-    -------
-    slide_patches : list
-        List of tuples (slide_id: [patch_ids])
-
-    n_slides : int
-        Number of slides
-
-    """
-    slide_patches = {}
-    for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id)
-        slide_id = get_slide_by_patch_id(
-            patch_ids)
-        if slide_id not in slide_patches:
-            slide_patches[slide_id] = []
-        slide_patches[slide_id] += [patch_id]
-    return list(slide_patches.items()), len(slide_patches)
-
-
-def create_patch_ids_by_patient(patch_ids):
-    """Function to create patch ids sorted by patient ids
-
-    Parameters
-    ----------
-    patch_ids : list
-        List of patch ids
-
-    Returns
-    -------
-    patient_patches : list
-        List of tuples (patient_id: [patch_ids])
-
-    n_patients : int
-        Number of slides
-
-    """
-    patient_patches = {}
-    for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id)
-        slide_id = get_slide_by_patch_id(
-            patch_ids)
-        match = re.search(PATIENT_REGEX, slide_id)
-        if match:
-            patient_id = match.group(1)
-            if patient_id not in patient_patches:
-                patient_patches[patient_id] = {}
-            patient_patches[patient_id] += [patch_id]
-    return list(patient_patches.items()), len(patient_patches)
-
-
-def create_subtype_slide_patch_dict(patch_ids):
-    """Function to patch ids sorted by {subtype: {slide_id: [patch_id]}
-
-    Parameters
-    ----------
-    patch_ids : list
-        List of patch ids
-
-    Returns
-    -------
-    subtype_slide_patch : dict
-        {subtype: {slide_id: [patch_id]}
-
-    """
-    subtype_slide_patch = {}
-    for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id)
-        patch_subtype = SubtypeEnum(get_label_by_patch_id(
-            patch_id)).name
-        if patch_subtype not in subtype_slide_patch:
-            subtype_slide_patch[patch_subtype] = {}
-        slide_id = get_slide_by_patch_id(patch_id)
-        if slide_id not in subtype_slide_patch[patch_subtype]:
-            subtype_slide_patch[patch_subtype][slide_id] = []
-        subtype_slide_patch[patch_subtype][slide_id] += [patch_id]
-    return subtype_slide_patch
 
 
 def create_subtype_patient_slide_patch_dict(patch_ids):
@@ -719,45 +585,6 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
     gt_labels = gt_labels.astype(np.int8)[empty_row_idx]
     pred_labels = pred_labels.astype(np.int8)[empty_row_idx]
     return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels, pred_labels, slide_ids
-
-
-def check_duplicate_data_ids(data_ids):
-    """Function to check duplicates of data ids
-
-    Parameters
-    ----------
-    data_ids : list
-        List of data ids
-
-    Returns
-    -------
-    duplicate_ids : list
-        List of data ids that are duplicated with number of duplicates
-
-    """
-    duplicate_ids = []
-    for patch_id, count in collections.Counter(data_ids).items():
-        if count > 1:
-            duplicate_ids += [(patch_id, count)]
-            print(patch_id, count)
-    return duplicate_ids
-
-
-def extract_patient_ids(slide_ids):
-    patient_ids = set()
-    for slide_id in slide_ids:
-        match = re.search(PATIENT_REGEX, slide_id)
-        if match:
-            patient_id = match.group(1)
-            if patient_id.isdigit():
-                patient_ids.add(patient_id)
-            else:
-                raise NotImplementedError(
-                    '{} is not a patient id since it contains non-digit chars.'.format(slide_id))
-        else:
-            raise NotImplementedError(
-                '{} is not detected by utils.PATIENT_REGEX'.format(slide_id))
-    return patient_ids
 
 
 def print_per_class_accuracy(per_class_acc):
