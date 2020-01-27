@@ -71,7 +71,7 @@ class BaseModel():
                 cur_subtype_idx = self.eval_data_labels == subtype
                 # randomly pick patch ids
                 try:
-                    # pick without replacement
+                    # pick without replacement to enlarge diversity
                     cur_eval_ids += np.random.choice(
                         eval_data_ids[cur_subtype_idx], per_subtype_samples, replace=False).tolist()
                 except ValueError:
@@ -83,7 +83,7 @@ class BaseModel():
         gt_labels = []
         # go through all patch ids
         for cur_eval_id in cur_eval_ids:
-            # generate patch id in format: subtype/slide_id/patch_location
+            # generate patch id in format: subtype/slide_id/patch_downsample_size/patch_location
             patch_id = utils.create_patch_id(
                 cur_eval_id, is_multiscale=self.is_multiscale)
             gt_label = utils.get_label_by_patch_id(

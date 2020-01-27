@@ -12,17 +12,65 @@ import matplotlib.path as pltPath
 import glob
 import re
 import os
-import random
 import torch
-import copy
 import collections
 import h5py
-import json
 
 PATIENT_REGEX = re.compile(r"^[A-Z]*-?(\d*).*\(?.*\)?.*$")
 
 
 def parse_patch_level_info(split_a_file_path, split_b_file_path, split_c_file_path, split_d_file_path, split_e_file_path, split_f_file_path, exclude_mode='gap', exclude_threshold=0.8):
+    """Function to parse the patch-level distribution files and exclude patches with `gap` and `var` option
+
+    Parameters
+    ----------
+    split_a_file_path : string
+        Absoluate path to the distribution file for split a
+
+    split_b_file_path : string
+        Absoluate path to the distribution file for split b
+
+    split_c_file_path : string
+        Absoluate path to the distribution file for split c
+
+    split_d_file_path : string
+        Absoluate path to the distribution file for split d
+
+    split_e_file_path : string
+        Absoluate path to the distribution file for split e
+
+    split_f_file_path : string
+        Absoluate path to the distribution file for split f
+
+    exclude_mode : string
+        Exclude patch mode. Option: `gap` and `var`
+        `gap` is defined as the the difference between the largest prob and the second largest prob
+        `var` is defined as the variance of the probility distribution
+
+    exclude_threshold : float
+        Excclude threshold value. If below this value, the patches will not be included
+
+
+    Returns
+    -------
+    cls_cnt_mats : numpy array
+        Each row represents a slide, and each row has five columns corresponding to number of classes
+
+    label_mats : list
+        A row contains the label for each slide
+
+    patch_labels : list
+        A row contains the label for each patch
+
+    patch_preds : list
+        A row conatins the predicted label for each patch
+
+    patch_probs : numpy array
+        Each row represents a probability distribution for each patch
+
+    slide_ids : numpy array
+        Corresponding to the slide id of each row of cls_cnt_mats
+    """
     # parse the patch level results
     cls_cnt_mat_a, label_mat_a, patch_prob_a, patch_labels_a, patch_pred_a, slide_ids_a = parse_distribution_file(
         split_a_file_path, exclude_mode=exclude_mode, threshold=exclude_threshold)
@@ -464,6 +512,36 @@ def prob_gap(probs):
 
 
 def compute_metric(labels, preds, probs=None, verbose=False):
+    """Function to compute the various metrics given predicted labels and ground truth labels
+
+    Parameters
+    ----------
+    labels : numpy array
+        A row contains the ground truth labels
+
+    preds: numpy array
+        A row contains the predicted labels
+
+    probs: numpy array
+        A matrix and each row is the probability for the predicted patches or slides
+
+    verbose : bool
+        Print detail of the computed metrics
+
+    Returns
+    -------
+    overall_acc : float
+        Accuracy
+
+    overall_kappa : float
+        Cohen's kappa
+
+    overall_f1 : float
+        F1 score
+
+    overall_auc : float
+        ROC AUC
+    """
     overall_acc = accuracy_score(labels, preds)
     overall_kappa = cohen_kappa_score(labels, preds)
     overall_f1 = f1_score(labels, preds, average='macro')
@@ -488,6 +566,8 @@ def compute_metric(labels, preds, probs=None, verbose=False):
 
 
 def count_n_slides(slide_count_list):
+    """Function to count the number of slides
+    """
     total = 0
     for slide_count in slide_count_list:
         total += len(slide_count)
