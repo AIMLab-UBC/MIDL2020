@@ -588,6 +588,14 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
 
 
 def print_per_class_accuracy(per_class_acc):
+    formal_order = ['HGSC', 'CC', 'EC', 'LGSC', 'MC']
+    subtype_dict = {}
+    for subtype in SubtypeEnum:
+        subtype_dict[subtype.name] = subtype.value
+    idx = []
+    for subtype in formal_order:
+        idx += [subtype_dict[subtype]]
+
     per_class_acc = per_class_acc * 100
     print('& {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(
-        per_class_acc[0], per_class_acc[1], per_class_acc[2], per_class_acc[3], per_class_acc[4]))
+        per_class_acc[idx[0]], per_class_acc[idx[1]], per_class_acc[idx[2]], per_class_acc[idx[3]], per_class_acc[idx[4]]))
