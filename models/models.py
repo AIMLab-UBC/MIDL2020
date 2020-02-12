@@ -1,6 +1,7 @@
 from models.base_model import BaseModel
 from utils.subtype_enum import SubtypeEnum
 from sklearn import ensemble
+from sklearn import svm
 from sklearn.preprocessing import StandardScaler
 from scipy.special import softmax
 import models.networks as networks
@@ -26,6 +27,8 @@ class CountBasedFusionModel(BaseModel):
         if self.count_fusion_classifier == 'RandomForest':
             self.classifier = ensemble.RandomForestClassifier(
                 criterion='gini', n_estimators=100, max_features='log2', class_weight='balanced', random_state=3242)
+        elif self.count_fusion_classifier == 'SVC':
+            self.classifier = svm.SVC(kernel='rbf', gamma=0.5, probability=True)
         else:
             raise NotImplementedError
 
