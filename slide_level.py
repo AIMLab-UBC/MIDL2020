@@ -7,12 +7,12 @@ import numpy as np
 def main(config):
     # parse patch-level results from different splits
     cls_cnt_mats, label_mats, patch_labels, patch_preds, patch_probs, slide_ids = utils.parse_patch_level_info(
-        '/Users/Andy/Desktop/results_maestro_v2/testing_a_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_b_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_c_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_d_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_e_distribution.txt',
-        '/Users/Andy/Desktop/results_maestro_v2/testing_f_distribution.txt',
+        './results/stage_2_patch_level/testing_a_distribution.txt',
+        './results/stage_2_patch_level/testing_b_distribution.txt',
+        './results/stage_2_patch_level/testing_c_distribution.txt',
+        './results/stage_2_patch_level/testing_d_distribution.txt',
+        './results/stage_2_patch_level/testing_e_distribution.txt',
+        './results/stage_2_patch_level/testing_f_distribution.txt',
         exclude_mode=config.count_exclude_mode, exclude_threshold=config.count_exclude_threshold
     )
     # compute the number of slides used

@@ -16,7 +16,7 @@ class Baseline(nn.Module):
         return logits
 
 
-class MultiStage(nn.Module):
+class TwoStageCNN(nn.Module):
     def _initialize_weights(self, modules):
         # https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py
         for m in modules:
@@ -59,15 +59,15 @@ class MultiStage(nn.Module):
             add_module.append(layer)
         return nn.Sequential(*add_module)
 
-    def __init__(self, num_classes=5, use_pretrained=False, progressive_size=256, weights_save_path=None):
-        super(MultiStage, self).__init__()
+    def __init__(self, num_classes=5, use_pretrained=False, patch_size=256, weights_save_path=None):
+        super(TwoStageCNN, self).__init__()
         # backbone model
         model = torchvision.models.vgg19_bn(pretrained=use_pretrained)
         # modify the last fully-connected layer
         model.classifier._modules['6'] = torch.nn.Linear(4096, num_classes)
         # load weights from 256 * 256
         # and change model for 512 * 512 input
-        if progressive_size == 512:
+        if patch_size == 512:
             # load stored state
             state = torch.load(weights_save_path)
             # load previous size learned weights and discard first conv block then add new conv blocks

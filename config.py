@@ -58,49 +58,30 @@ main_arg.add_argument('--count_exclude_threshold', type=float,
 main_arg.add_argument('--model_name_prefix', type=str, default='')
 
 main_arg.add_argument('--epoch', type=int,
-                      default=5,
+                      default=20,
                       help='Number of epoches')
 
 main_arg.add_argument('--batch_size', type=int,
-                      default=32,
-                      help='Batch size')
-
-
-main_arg.add_argument('--eval_batch_size', type=int,
-                      default=1,
+                      default=64,
                       help='Batch size')
 
 main_arg.add_argument('--lr', type=float,
                       default=0.0002,
                       help='Learning rate')
 
-main_arg.add_argument('--gamma', type=float, default=1)
-
-main_arg.add_argument('--l2_decay', type=float, default=0)
-
-main_arg.add_argument('--momentum', type=float, default=0.9)
-
 main_arg.add_argument('--rep_intv', type=int,
-                      default=500,
+                      default=250,
                       help='Report interval')
 
-main_arg.add_argument('--save_intv', type=int,
-                      default=5,
-                      help='Save model interval')
-
-main_arg.add_argument('--patch_size', type=int,
-                      default=256,
-                      help='Patch size')
-
 main_arg.add_argument('--n_eval_samples', type=int,
-                      default=500,
+                      default=2000,
                       help='Number of samples for eval during training')
 
 main_arg.add_argument('--n_subtypes', type=int,
                       default=5)
 
 main_arg.add_argument('--expert_magnification', type=int,
-                      default=512)
+                      default=256)
 
 main_arg.add_argument('--optim', type=str, default='Adam')
 
