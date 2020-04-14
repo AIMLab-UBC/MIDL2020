@@ -13,3 +13,14 @@ url={https://openreview.net/forum?id=VXdQD8B307},
 note={under review}
 }
 ```
+
+# Prerequisites
+- Linux or macOS
+- Python 3.5.2
+- PyTorch 1.0.0
+- scikit-learn 0.22.2.post1
+- NVIDIA GPU + CUDA CuDNN
+
+# Datasets
+The data underlying the findings of this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request.
+
