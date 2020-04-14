@@ -22,5 +22,11 @@ note={under review}
 - NVIDIA GPU + CUDA CuDNN
 
 # Datasets
-The data underlying the findings of this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request.
+The epithelial ovarian carcinoma whole-slide pathology images used in this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request.
+
+Our dataset has the following distribution in terms of patients, slides, and 1024 * 1024 tumor patches:
+||Data Type||CC||LGSC||EC||MC||HGSC||Total||
+|Patient|32|14|28|9|76|159|
+|Slide|53|29|55|11|157|305|
+|Patch|16.49%|16.31%|12.93%|10.96%|43.31%|161516|
 
