@@ -14,7 +14,6 @@ class BaseDataset(Dataset):
         self.mode = config.mode
         self.is_eval = config.mode != 'Training'
         self.n_eval_samples = config.n_eval_samples
-        self.patch_size = config.patch_size
         self.preload_images = h5py.File(os.path.join(
             config.dataset_dir, config.preload_image_file_name), 'r')
         self.n_subtypes = config.n_subtypes
