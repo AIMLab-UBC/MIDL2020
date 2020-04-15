@@ -114,7 +114,7 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 <img src="./docs/nested-cv.png" width="600" class="center"/>
 </p>
 
-### Split A Distribution, Baseline results, Stage-1 results, and Stage-2 results
+### Split A Distribution and Patch-level Classifier Test Results
 
 #### Training set
 |Data Type|CC|LGSC|EC|MC|HGSC|Total|
@@ -137,12 +137,162 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 |Slide|10|10|6|1|24|51|
 |Patch|29.18%|18.83%|12.59%|2.55%|36.85%|26033|
 
-#### Baseline Stage-1 and Stage-2 test results
+#### Baseline, Stage-1 and Stage-2 test results
 |Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |Baseline|99.22%|89.60%|73.89%|100.00%|75.05%|85.33%|0.8015|0.9739|0.8546|87.55%|
 |Stage-1|99.42%|79.05%|63.58%|99.85%|74.70%|81.97%|0.7543|0.9651|0.8105|83.32%|
 |Stage-2|99.50%|77.34%|72.70%|99.55%|72.64%|82.05%|0.7568|0.9658|0.8243|84.34%|
+
+### Split B Distribution and Patch-level Classifier Test Results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|22|10|20|6|52|110|
+|Slide|36|16|40|7|114|213|
+|Patch|13.66%|14.39%|13.62%|10.26%|48.08%|120889|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|4|1|12|24|
+|Slide|10|10|6|1|24|51|
+|Patch|29.18%|18.83%|12.59%|2.55%|36.85%|26033|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|4|2|12|25|
+|Slide|7|3|9|3|19|41|
+|Patch|17.31%|27.79%|7.85%|31.73%|15.33%|14594|
+
+#### Baseline, Stage-1 and Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Baseline|89.90%|76.58%|81.05%|20.89%|58.78%|58.84%|0.4986|0.8969|0.5698|65.44%|
+|Stage-1|89.59%|74.04%|75.72%|44.58%|50.38%|63.89%|0.5521|0.8997|0.6122|66.86%|
+|Stage-2|86.26%|64.32%|63.23%|37.93%|60.84%|59.13%|0.4965|0.8823|0.5711|62.52%|
+
+### Split C Distribution and Patch-level Classifier Test Results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|21|9|18|6|50|104|
+|Slide|37|21|29|8|97|192|
+|Patch|19.30%|15.31%|11.21%|13.55%|40.63%|96661|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|6|3|5|2|13|29|
+|Slide|7|3|13|2|25|50|
+|Patch|6.87%|12.82%|12.82%|12.84%|54.64%|18990|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|5|1|13|26|
+|Slide|9|5|13|1|35|63|
+|Patch|14.55%|19.86%|16.62%|4.71%|44.26%|45865|
+
+#### Baseline, Stage-1 and Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Baseline|95.11%|54.81%|80.17%|96.76%|63.07%|70.52%|0.6035|0.9335|0.7300|77.99%|
+|Stage-1|84.44%|32.51%|77.52%|97.45%|81.99%|72.51%|0.6132|0.9276|0.7162|74.78%|
+|Stage-2|97.06%|58.49%|78.55%|97.64%|68.81%|73.84%|0.6452|0.9507|0.7532|80.11%|
+
+### Split D Distribution and Patch-level Classifier Test Results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|21|9|18|6|50|104|
+|Slide|37|21|29|8|97|192|
+|Patch|19.30%|15.31%|11.21%|13.55%|40.63%|96661|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|5|1|13|26|
+|Slide|9|5|13|1|35|63|
+|Patch|14.55%|19.86%|16.62%|4.71%|44.26%|45865|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|6|3|5|2|13|29|
+|Slide|7|3|13|2|25|50|
+|Patch|6.87%|12.82%|12.82%|12.84%|54.64%|18990|
+
+#### Baseline, Stage-1 and Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Baseline|64.29%|83.37%|48.71%|99.84%|80.76%|78.30%|0.6790|0.9473|0.7212|75.39%|
+|Stage-1|76.55%|79.10%|40.04%|98.24%|87.14%|80.77%|0.7056|0.9423|0.7383|76.21%|
+|Stage-2|65.06%|84.11%|33.76%|95.41%|88.33%|80.10%|0.6881|0.9277|0.7261|73.33%|
+
+### Split E Distribution and Patch-level Classifier Test Results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|21|9|18|6|50|104|
+|Slide|33|21|41|7|103|205|
+|Patch|17.16%|19.44%|13.73%|9.38%|40.30%|105482|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|6|3|5|2|13|29|
+|Slide|11|3|7|3|27|51|
+|Patch|12.62%|10.19%|11.73%|39.90%|25.57%|16690|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|5|1|13|26|
+|Slide|9|5|7|1|27|49|
+|Patch|16.33%|10.54%|11.32%|2.91%|58.91%|39344|
+
+#### Baseline, Stage-1 and Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Baseline|79.29%|88.15%|26.77%|99.74%|65.01%|66.47%|0.5003|0.9149|0.6336|71.79%|
+|Stage-1|61.00%|95.37%|58.06%|98.78%|68.85%|70.01%|0.5490|0.9371|0.7058|76.41%|
+|Stage-2|70.92%|90.98%|47.80%|97.81%|66.74%|68.74%|0.5285|0.9156|0.7067|74.85%|
+
+### Split F Distribution and Patch-level Classifier Test Results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|21|9|18|6|50|104|
+|Slide|33|21|41|7|103|205|
+|Patch|17.16%|19.44%|13.73%|9.38%|40.30%|105482|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|5|1|13|26|
+|Slide|9|5|7|1|27|49|
+|Patch|16.33%|10.54%|11.32%|2.91%|58.91%|39344|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|6|3|5|2|13|29|
+|Slide|11|3|7|3|27|51|
+|Patch|12.62%|10.19%|11.73%|39.90%|25.57%|16690|
+
+#### Baseline, Stage-1 and Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Baseline|94.78%|31.24%|65.25%|39.14%|51.64%|51.61%|0.3993|0.8751|0.5124|56.41%|
+|Stage-1|95.58%|33.35%|90.04%|33.88%|58.13%|54.40%|0.4404|0.8893|0.5464|62.20%|
+|Stage-2|95.96%|28.12%|53.65%|41.63%|75.05%|57.06%|0.4615|0.8287|0.5492|58.88%|
 
 
 
