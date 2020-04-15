@@ -562,8 +562,8 @@ def compute_metric(labels, preds, probs=None, verbose=False):
         print('F1: {:.4f}'.format(overall_f1))
         if not (probs is None):
             print('AUC ROC: {:.4f}'.format(overall_auc))
-        print_per_class_accuracy(
-            acc_per_subtype, overall_acc, overall_kappa, overall_auc, overall_f1)
+            print_per_class_accuracy(
+                acc_per_subtype, overall_acc, overall_kappa, overall_auc, overall_f1)
 
     # return results
     if not (probs is None):

@@ -108,7 +108,7 @@ Group 3 has the following distributions:
 |Patch|24.91%|22.05%|10.89%|13.03%|29.12%|40627|
 
 ## Patch-level Results
-For patch-level classification, we employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as the training set and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have 6 different training, validation and test set. For slide-level classification, we only use the patch-level test set results to build the input matrix, and we report the 6-fold cross-validation slide-level results.
+For patch-level classification, we employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as the training set and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have 6 different training, validation and test set.
 
 <p align="center">
 <img src="./docs/nested-cv.png" width="600" class="center"/>
@@ -295,6 +295,11 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 |Stage-2|95.96%|28.12%|53.65%|41.63%|75.05%|57.06%|0.4615|0.8287|0.5492|58.88%|
 
 
+## Slide-level Results
+For slide-level classification, we only use the patch-level test set results to build the input matrix to train random forests, and we report the 6-fold cross-validation slide-level results.
 
+|Split|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|Overall|86.79%|100.00%|74.55%|81.82%|90.45%|87.54%|0.8106|0.9641|0.8718|86.72%|
 
 
