@@ -115,7 +115,7 @@ After changing the path to the six patch-level results in the `slide_level.py`, 
 We include our patch-level and slide-level results in `./results/`. 
 
 # Datasets and Detailed Results
-The epithelial ovarian carcinoma whole-slide pathology images used in this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request.
+The epithelial ovarian carcinoma whole-slide pathology images used in this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request. Moreover, the patch-level trained weights are also available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request. 
 
 Our dataset has the following distribution in terms of patients, slides, and 1024 * 1024 tumor patches:
 |Data Type|CC|LGSC|EC|MC|HGSC|Total|
