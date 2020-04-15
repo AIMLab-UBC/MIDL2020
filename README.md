@@ -43,7 +43,7 @@ Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512
 
 ### Patch-level: train, validation and test
 
-*A detailed explanation of the data splits and results in the short paper are available in the section Datases*
+**A detailed explanation of the data splits and results in the short paper are available in the section Datasets**
 
 The following bash script is used to invokve training, validation and test:
 ```
