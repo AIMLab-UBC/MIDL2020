@@ -14,6 +14,8 @@ note={under review}
 }
 ```
 
+Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_of_gans) and (fast.ai)[https://www.fast.ai/2018/04/30/dawnbench-fastai/].
+
 # Prerequisites
 - Linux or macOS
 - Python 3.5.2
@@ -35,9 +37,9 @@ cd midl2020
 ```
 
 ### Patch extraction
-First of all, you should define the `enum` in `utils/subtype_enum.py`.
+First of all, the `enum` in `utils/subtype_enum.py` should be defined.
 
-Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512 and 256 * 256 using the `extract_patches.py`. This script not only extract patches, but also store the patches into a H5 file to easy data transfer and management. However, we use our own data annotation file so the annotation check part needs to changed for your own dataset. 
+Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512 and 256 * 256 using the `extract_patches.py`. This script not only extract patches, but also store the patches into a H5 file for easy data transfer and management. However, we use our own data annotation file so the annotation parse and check portion needs to changed for other dataset. 
 
 ### Patch-level: train, validation and test
 The following bash script is used to invokve training, validation and test:
