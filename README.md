@@ -1,6 +1,6 @@
 # MIDL2020
 
-![Schematic of patch-level classification workflow](./docs/schematic.png)
+![Schematic of patch-level classification workflow](./docs/schematic.png | width=100)
 
 This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=VXdQD8B307). The code was written by [Yiping Wang](mailto:yiping@wang.vision). If you use this code for your research, please cite:
 
@@ -107,7 +107,7 @@ Group 3 has the following distributions:
 ## Patch-Level Classification
 We employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as training set, and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have six different training, validation and test set.
 
-![Patch-level and Slide-level cross-validation illustration](./docs/nested-cv.png)
+![Patch-level and Slide-level cross-validation illustration](./docs/nested-cv.png | width=100)
 
 
 
