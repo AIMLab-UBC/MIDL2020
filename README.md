@@ -41,6 +41,44 @@ git clone https://github.com/AliBashashati/MIDL2020
 cd midl2020
 ```
 
+### Repo Structure
+
+- `patch_level.py` is the patch-level classifier entry. Inside this file, function `train` initialize models, create data loader, optimize model weights, log training information, etc. `evaluate` simply loads the trained model and apply the model on validation or testing sets. 
+
+- `config.py` is the program that reads arguments from the user. Therefore, you can custom any hyperparameters or settings through `config.py`
+
+- `models` is the sub-module that contains implementation involves models.
+
+    - Inside `models` sub-module, `models/base_model.py` is the template class for `models/models.py`. It defines various expected behaviours of a model, such as `forward`, `optimize_weights`, `load_state`, `save_state`, etc. Any models should inherit `BaseModel`. 
+
+    - Inside `models` sub-module, `models/models.py` is the `models/networks.py` interface. It initialize `models/networks.py` and optimize the weights of `models/networks.py`. Different models in `models/models.py` are summaized in the following table. 
+
+
+        | Models | Usage |
+        | ------------- |:-------------:|
+        | `CountBasedFusionModel` | Slide-Level model wrapper. It assumes an input of N*C matrix, where N represents the number of slides, C represents the number of classes. | 
+        | `DeepModel` | Patch-Level model wrapper. It is a simple wrapper for out-of-box deep learning models. It takes one patch for each forward pass. It follows the standard deep learning training protocol. |
+
+    - Inside `models` sub-module, `models/networks.py` is the implementation of various networks. It simply defines network architecture and `forward` functions. Keep it as simple as possible. 
+
+- `data` is the sub-module that contains data loader, preprocess, and post-process functions. 
+
+    - Inside `data` sub-module, `data/base_dataset.py` is the template class for other data loaders. It simply defines data loader behaviour, and assign `config.py` settings into the current data loader. Moreover, it also modifies the patch ids if requires, such as change multi-scale model scales, etc. 
+
+    - Inside `data` sub-module, `data/patch_dataset.py` is the main patch images or patch features data loader. 
+
+        | Dataset | Usage |
+        | ------------- |:-------------:|
+        | `SubtypePatchDataset` | It loads patch images from H5 files and applies preprocess steps.|
+
+
+- `utils` is the sub-module that contains simple but useful function snippet. 
+
+    - Inside `utils` sub-module, `utils/utils.py` contains a wide range of useful small functions. Contributors should also add useful functions in here, and add docstring. Moreover, functions in here should be self-explained and as general as possible. 
+
+    - Inside `utils` sub-module, `utils/subtype_enum.py` defines enum for classes. 
+
+
 ### Patch extraction
 First of all, the `enum` in `utils/subtype_enum.py` should be defined.
 
@@ -300,6 +338,6 @@ For slide-level classification, we only use the patch-level test set results to 
 
 |Split|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|Overall|86.79%|100.00%|74.55%|81.82%|90.45%|87.54%|0.8106|0.9641|0.8718|86.72%|
+|6-fold cross-validation|86.79%|100.00%|74.55%|81.82%|90.45%|87.54%|0.8106|0.9641|0.8718|86.72%|
 
 
