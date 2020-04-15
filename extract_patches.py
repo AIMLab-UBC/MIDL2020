@@ -187,7 +187,8 @@ def store_image_to_h5(data_dir, h5f_path):
     None
     """
     with h5py.File(h5f_path) as h5f_image:
-        patch_ids = glob.glob(os.path.join(data_dir, '**', '**', '*.png'))
+        patch_ids = glob.glob(os.path.join(
+            data_dir, '**', '**', '**', '*.png'))
         prefix = 'Storing Patches: '
         for idx, patch_id in enumerate(tqdm(patch_ids, desc=prefix)):
             if patch_id not in h5f_image:
