@@ -18,6 +18,9 @@ class BaseDataset(Dataset):
             config.dataset_dir, config.preload_image_file_name), 'r')
         self.n_subtypes = config.n_subtypes
         self.use_equalized_batch = config.use_equalized_batch
+        self.is_multiscale_expert = config.is_multiscale_expert
+        self.expert_magnification = config.expert_magnification
+        self.is_multiscale = config.is_multiscale_expert
 
         if config.mode == 'Testing':
             # Testing mode is used for evaluating model in the test dataset
