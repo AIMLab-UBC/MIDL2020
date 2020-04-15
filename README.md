@@ -107,7 +107,9 @@ Group 3 has the following distributions:
 ## Patch-Level Classification
 We employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as training set, and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have six different training, validation and test set.
 
-![Patch-level and Slide-level cross-validation illustration](./docs/nested-cv.png){:height="50%" width="50%"}
+![Patch-level and Slide-level cross-validation illustration](./docs/nested-cv.png)
+
+<img src="./docs/nested-cv.png" width="20" />
 
 
 
