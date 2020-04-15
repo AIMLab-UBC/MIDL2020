@@ -310,7 +310,7 @@ def count_subtype(input_src, n_subtypes=5):
     return count_per_subtype
 
 
-def get_label_by_patch_id(patch_id, is_multiscale=False):
+def get_label_by_patch_id(patch_id, is_multiscale=True):
     """Function to obtain label from patch id
 
     Parameters
