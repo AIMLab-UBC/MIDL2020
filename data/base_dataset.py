@@ -42,12 +42,12 @@ class BaseDataset(Dataset):
             # replace data id to the corresponding expert magnification
             for idx, cur_data_id in enumerate(self.cur_data_ids):
                 data_info = cur_data_id.split('/')
-                data_info[-2] = self.expert_magnification
+                data_info[-2] = str(self.expert_magnification)
                 self.cur_data_ids[idx] = '/'.join(data_info)
             if self.config.mode == 'Training':
                 for idx, cur_data_id in enumerate(self.eval_data_ids):
                     data_info = cur_data_id.split('/')
-                    data_info[-2] = self.expert_magnification
+                    data_info[-2] = str(self.expert_magnification)
                     self.eval_data_ids[idx] = '/'.join(data_info)
         # employ balanced batch during training
         if self.use_equalized_batch:
