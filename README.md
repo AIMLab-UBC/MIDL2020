@@ -14,7 +14,7 @@ note={under review}
 }
 ```
 
-Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_of_gans) and (fast.ai)[https://www.fast.ai/2018/04/30/dawnbench-fastai/].
+Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_of_gans) and [fast.ai](https://www.fast.ai/2018/04/30/dawnbench-fastai/).
 
 # Prerequisites
 - Linux or macOS
