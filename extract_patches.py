@@ -67,14 +67,24 @@ def extract_annotated_patches(slide_path, save_dir, slide_label, annotation, pat
             for label, polypath in annotation:
                 if label == 'Tumor' and np.sum(polypath.contains_points(corners)) == 4:
                     patch = preprocess.extract_and_resize(
-                        slide, patch_loc_width, patch_loc_height, patch_size, resize_size)
+                        slide, patch_loc_width, patch_loc_height, patch_size, patch_size)
                     if preprocess.check_luminance(np.asarray(patch)):
+                        # save 1024 downsampled to 256 patches
+                        patch_save_dir = os.path.join(
+                            save_dir, str(resize_size[0]))
+                        if not os.path.isdir(patch_save_dir):
+                            os.makedirs(patch_save_dir)
                         patch_save_path = os.path.join(save_dir, str(resize_size[0]), '{}_{}.png'.format(
                             patch_loc_width, patch_loc_height))
                         if not os.path.exists(patch_save_path):
                             patch = preprocess.extract_and_resize(
                                 slide, patch_loc_width, patch_loc_height, patch_size, resize_size[0])
                             patch.save(patch_save_path)
+                        # save 1024 downsampled to 512 patches
+                        patch_save_dir = os.path.join(
+                            save_dir, str(resize_size[1]))
+                        if not os.path.isdir(patch_save_dir):
+                            os.makedirs(patch_save_dir)
                         patch_save_path = os.path.join(save_dir, str(resize_size[1]), '{}_{}.png'.format(
                             patch_loc_width, patch_loc_height))
                         if not os.path.exists(patch_save_path):
