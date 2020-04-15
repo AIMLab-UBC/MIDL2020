@@ -19,21 +19,16 @@ def main(config):
     n_slides = utils.count_n_slides(cls_cnt_mats)
     print('{} WSIs are included'.format(n_slides))
     print('{} patches are included'.format(len(patch_preds)))
-    # compute patch-level matric
-    print('------------ Patch-Level -------------')
-    utils.compute_metric(patch_labels, patch_preds, patch_probs, verbose=True)
-    print('--------------------------------------')
     # combination of each split
     combinations = [[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 5, 4], [0, 1, 4, 5, 2, 3], [
         0, 1, 4, 5, 3, 2], [2, 3, 4, 5, 0, 1], [2, 3, 4, 5, 1, 0]]
     # place holders to store data
     slide_labels = np.array([])
-    majority_vote_preds_slide_labels = np.array([])
     model_preds_slide_labels = np.array([])
     model_preds_slide_prob = np.array([]).reshape(0, 5)
     # start computing
     split_id = -1
-    with open('./slide_distribution_transfer_model.txt', 'w') as f:
+    with open('./results/stage_2_slide_level/six_fold_cross_validation.txt', 'w') as f:
         for combination in combinations:
             split_id += 1
             # build slide-level model traning set
@@ -58,10 +53,6 @@ def main(config):
             test_slide_mat = slide_ids[combination[5]]
             # compute labels using majority vote strategy
             cur_majority_vote_labels = np.argmax(test_cls_cnt_mat, axis=1)
-            # store majority vote labels
-            majority_vote_preds_slide_labels = np.hstack([
-                majority_vote_preds_slide_labels,
-                cur_majority_vote_labels])
             # initialize slide-level model
             model = models.CountBasedFusionModel(config)
             # preprocess training set
@@ -93,18 +84,8 @@ def main(config):
             slide_labels = np.hstack([slide_labels, test_label_mat])
             # save current model
             model.save(chr(97 + split_id))
-            # report current model and majority vote accuracy and kappa
-            print('----- Majority Vote Split {} --------'.format(chr(97 + split_id)))
-            utils.compute_metric(
-                test_label_mat, cur_majority_vote_labels, verbose=True)
-            print('----- Model Split {} --------'.format(chr(97 + split_id)))
-            utils.compute_metric(test_label_mat, cur_model_preds,
-                                 cur_model_probs, verbose=True)
-    # report overall metric for model and majority vote
-    print('------------ Majoirty Vote Slide-Level Weighted Performance -------------')
-    utils.compute_metric(
-        slide_labels, majority_vote_preds_slide_labels, verbose=True)
-    print('------------ Model Slide-Level Weighted Performance -------------')
+
+    print('------------ Slide-Level 6-Fold Cross-Validation -------------')
     utils.compute_metric(
         slide_labels, model_preds_slide_labels, model_preds_slide_prob, verbose=True)
 

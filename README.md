@@ -53,7 +53,6 @@ cd midl2020
 
     - Inside `models` sub-module, `models/models.py` is the `models/networks.py` interface. It initialize `models/networks.py` and optimize the weights of `models/networks.py`. Different models in `models/models.py` are summaized in the following table. 
 
-
         | Models | Usage |
         | ------------- |:-------------:|
         | `CountBasedFusionModel` | Slide-Level model wrapper. It assumes an input of N*C matrix, where N represents the number of slides, C represents the number of classes. | 
@@ -70,6 +69,8 @@ cd midl2020
         | Dataset | Usage |
         | ------------- |:-------------:|
         | `SubtypePatchDataset` | It loads patch images from H5 files and applies preprocess steps.|
+
+    - Inside `data` sub-module, `data/create_patient_groups.py` is the helper script to split the dataset by patients. 
 
 
 - `utils` is the sub-module that contains simple but useful function snippet. 
@@ -145,12 +146,22 @@ Group 3 has the following distributions:
 |Slide|17|13|15|4|43|92|
 |Patch|24.91%|22.05%|10.89%|13.03%|29.12%|40627|
 
-## Patch-level Results
-For patch-level classification, we employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as the training set and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have 6 different training, validation and test set.
+## Slide-level and Patch-Level Results
 
 <p align="center">
 <img src="./docs/nested-cv.png" width="600" class="center"/>
 </p>
+
+For slide-level classification, we only use the patch-level test set results to build the input matrix to train random forests, and we report the 6-fold cross-validation slide-level results.
+
+|Split|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|baseline 6-fold cross-validation|83.02%|65.52%|54.55%|54.55%|80.25%|73.77%|0.5993|0.9391|0.6855|67.58%|
+|stage-1 6-fold cross-validation|79.25%|79.31%|61.82%|54.55%|85.99%|78.69%|0.6730|0.9375|0.7414|72.18%|
+|stage-2 6-fold cross-validation|86.79%|100.00%|74.55%|81.82%|90.45%|87.54%|0.8106|0.9641|0.8718|86.72%|
+
+For patch-level classification, we employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as the training set and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have 6 different training, validation and test set.
+
 
 ### Split A Distribution and Patch-level Classifier Test Results
 
@@ -332,12 +343,5 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 |Stage-1|95.58%|33.35%|90.04%|33.88%|58.13%|54.40%|0.4404|0.8893|0.5464|62.20%|
 |Stage-2|95.96%|28.12%|53.65%|41.63%|75.05%|57.06%|0.4615|0.8287|0.5492|58.88%|
 
-
-## Slide-level Results
-For slide-level classification, we only use the patch-level test set results to build the input matrix to train random forests, and we report the 6-fold cross-validation slide-level results.
-
-|Split|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|6-fold cross-validation|86.79%|100.00%|74.55%|81.82%|90.45%|87.54%|0.8106|0.9641|0.8718|86.72%|
 
 
