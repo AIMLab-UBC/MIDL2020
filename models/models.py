@@ -212,7 +212,7 @@ class DeepModel(BaseModel):
             if len(self.eval_data_labels) == 0:
                 for eval_data_id in eval_data_ids:
                     self.eval_data_labels += [
-                        utils.get_label_by_patch_id(eval_data_id, self.is_multiscale)]
+                        utils.get_label_by_patch_id(eval_data_id)]
                 # convert to numpy array for fast indexing
                 self.eval_data_labels = np.asarray(self.eval_data_labels)
             # store the evaluation patch ids
@@ -239,9 +239,9 @@ class DeepModel(BaseModel):
         for cur_eval_id in cur_eval_ids:
             # generate patch id in format: subtype/slide_id/patch_downsample_size/patch_location
             patch_id = utils.create_patch_id(
-                cur_eval_id, is_multiscale=self.is_multiscale)
+                cur_eval_id)
             gt_label = utils.get_label_by_patch_id(
-                cur_eval_id, is_multiscale=self.is_multiscale)
+                cur_eval_id)
             # preprocess images
             cur_image = self.eval_images[patch_id]['image_data'][()]
             cur_image = Image.fromarray(cur_image)

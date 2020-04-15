@@ -267,7 +267,7 @@ def create_patch_id(path):
     patch_id : string
         Remove useless information before patch id for h5 file storage
     """
-    label_idx = -3
+    label_idx = -4
     patch_id = strip_extension(path).split('/')[label_idx:]
     patch_id = '/'.join(patch_id)
     return patch_id
@@ -310,7 +310,7 @@ def count_subtype(input_src, n_subtypes=5):
     return count_per_subtype
 
 
-def get_label_by_patch_id(patch_id, is_multiscale=True):
+def get_label_by_patch_id(patch_id):
     """Function to obtain label from patch id
 
     Parameters
@@ -325,13 +325,13 @@ def get_label_by_patch_id(patch_id, is_multiscale=True):
         Integer label from SubtypeEnum
 
     """
-    label_idx = -3 if not is_multiscale else -4
+    label_idx = -4
     label = patch_id.split('/')[label_idx]
     label = SubtypeEnum[label.upper()]
     return label.value
 
 
-def get_slide_by_patch_id(patch_id, is_multiscale=False):
+def get_slide_by_patch_id(patch_id):
     """Function to obtain slide id from patch id
 
     Parameters
@@ -346,7 +346,7 @@ def get_slide_by_patch_id(patch_id, is_multiscale=False):
         Slide id extracted from `patch_id`
 
     """
-    slide_idx = -2 if not is_multiscale else -3
+    slide_idx = -3
     slide_id = patch_id.split('/')[slide_idx]
     return slide_id
 
@@ -649,12 +649,12 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
             probs[idx] = prob
             # obtain ground truth label from data path
             gt_label = np.asarray(get_label_by_patch_id(
-                patch_info[patch_info_idx], is_multiscale=True))
+                patch_info[patch_info_idx]))
             pred_label = np.argmax(prob)
             pred_labels[idx] = pred_label
             gt_labels[idx] = gt_label
             slide_id = get_slide_by_patch_id(
-                patch_info[patch_info_idx], is_multiscale=True)
+                patch_info[patch_info_idx])
             if slide_id not in cls_cnt_dict:
                 cls_cnt_dict[slide_id] = np.zeros(n_subtypes)
                 label_dict[slide_id] = gt_label
