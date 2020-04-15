@@ -13,10 +13,15 @@ import glob
 import re
 import os
 import torch
-import collections
 import h5py
 
 PATIENT_REGEX = re.compile(r"^[A-Z]*-?(\d*).*\(?.*\)?.*$")
+
+
+def print_patch_level_results(file_path):
+    _, _, patch_prob, patch_labels, patch_pred, _ = parse_distribution_file(
+        file_path, exclude_mode='none')
+    compute_metric(patch_labels, patch_pred, patch_prob, verbose=True)
 
 
 def parse_patch_level_info(split_a_file_path, split_b_file_path, split_c_file_path, split_d_file_path, split_e_file_path, split_f_file_path, exclude_mode='gap', exclude_threshold=0.8):
@@ -557,7 +562,9 @@ def compute_metric(labels, preds, probs=None, verbose=False):
         print('F1: {:.4f}'.format(overall_f1))
         if not (probs is None):
             print('AUC ROC: {:.4f}'.format(overall_auc))
-        print_per_class_accuracy(acc_per_subtype)
+        print_per_class_accuracy(
+            acc_per_subtype, overall_acc, overall_kappa, overall_auc, overall_f1)
+
     # return results
     if not (probs is None):
         return overall_acc, overall_kappa, overall_f1, overall_auc
@@ -667,15 +674,16 @@ def parse_distribution_file(file_path, n_subtypes=5, exclude_mode='gap', thresho
     return cls_cnt_mat, label_mat, probs[empty_row_idx], gt_labels, pred_labels, slide_ids
 
 
-def print_per_class_accuracy(per_class_acc):
+def print_per_class_accuracy(per_class_acc, overall_acc, overall_kappa, overall_auc, overall_f1):
     formal_order = ['HGSC', 'CC', 'EC', 'LGSC', 'MC']
     subtype_dict = {}
-    for subtype in SubtypeEnum:
-        subtype_dict[subtype.name] = subtype.value
-    idx = []
-    for subtype in formal_order:
-        idx += [subtype_dict[subtype]]
+    # for subtype in SubtypeEnum:
+    #     subtype_dict[subtype.name] = subtype.value
+    idx = [0, 1, 2, 3, 4]
+    # for subtype in formal_order:
+    #     idx += [subtype_dict[subtype]]
 
     per_class_acc = per_class_acc * 100
-    print('& {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% \\\\'.format(
-        per_class_acc[idx[0]], per_class_acc[idx[1]], per_class_acc[idx[2]], per_class_acc[idx[3]], per_class_acc[idx[4]]))
+
+    print('|{:.2f}%|{:.2f}%|{:.2f}%|{:.2f}%|{:.2f}%|{:.2f}%|{:.4f}|{:.4f}|{:.4f}|{:.2f}%|'.format(
+        per_class_acc[idx[0]], per_class_acc[idx[1]], per_class_acc[idx[2]], per_class_acc[idx[3]], per_class_acc[idx[4]],  overall_acc * 100, overall_kappa, overall_auc, overall_f1, per_class_acc.mean()))

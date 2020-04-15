@@ -114,6 +114,44 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 <img src="./docs/nested-cv.png" width="600" class="center"/>
 </p>
 
+### Split A Distribution, Baseline results, Stage-1 results, and Stage-2 results
+
+#### Training set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|22|10|20|6|52|110|
+|Slide|36|16|40|7|114|213|
+|Patch|13.66%|14.39%|13.62%|10.26%|48.08%|120889|
+
+#### Validation set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|4|2|12|25|
+|Slide|7|3|9|3|19|41|
+|Patch|17.31%|27.79%|7.85%|31.73%|15.33%|14594|
+
+#### Test set
+|Data Type|CC|LGSC|EC|MC|HGSC|Total|
+| --- | --- | --- | --- | --- | --- | --- |
+|Patient|5|2|4|1|12|24|
+|Slide|10|10|6|1|24|51|
+|Patch|29.18%|18.83%|12.59%|2.55%|36.85%|26033|
+
+#### Baseline test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- |
+|Baseline|99.22%|89.60%|73.89%|100.00%|75.05%|85.33%|0.8015|0.9739|0.8546|87.55%|
+
+#### Stage-1 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- |
+|Stage-1|99.42%|79.05%|63.58%|99.85%|74.70%|81.97%|0.7543|0.9651|0.8105|83.32%|
+
+#### Stage-2 test results
+|Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
+| --- | --- | --- | --- | --- | --- | --- |
+|Stage-2|99.50%|77.34%|72.70%|99.55%|72.64%|82.05%|0.7568|0.9658|0.8243|84.34%|
+
 
 
 
