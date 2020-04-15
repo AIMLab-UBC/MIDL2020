@@ -93,7 +93,7 @@ We store the patches in the h5 files who has the format `class_name/slide_id/pat
 The following bash script is used to invokve training, validation and test:
 ```
 #!/bin/bash
-chmod 775 ./maestro.py
+chmod 775 ./patch_level.py
 echo 'Two-stage model using split A'
 
 echo 'Stage 1 - Patch Size 256 * 256 Training'
