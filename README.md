@@ -1,6 +1,8 @@
 # MIDL2020
 
-<img src="./docs/schematic.png" width="600" class="center"/>
+<p align="center">
+<img src="./docs/schematic.png" width="600"/>
+</p>
 
 
 This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=VXdQD8B307). The code was written by [Yiping Wang](mailto:yiping@wang.vision). If you use this code for your research, please cite:
@@ -108,7 +110,9 @@ Group 3 has the following distributions:
 ## Patch-Level Classification
 We employ a 3-fold cross-validation scheme with a tweak. We use two of three patient groups as training set, and divide the remaining group equally by patient into two subgroups, one of the subgroups will be used as validation *or* test set. Therefore, we eventually have six different training, validation and test set.
 
+<p align="center">
 <img src="./docs/nested-cv.png" width="600" class="center"/>
+</p>
 
 
 
