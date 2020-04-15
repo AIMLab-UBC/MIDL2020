@@ -139,17 +139,17 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 
 #### Baseline test results
 |Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |Baseline|99.22%|89.60%|73.89%|100.00%|75.05%|85.33%|0.8015|0.9739|0.8546|87.55%|
 
 #### Stage-1 test results
 |Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |Stage-1|99.42%|79.05%|63.58%|99.85%|74.70%|81.97%|0.7543|0.9651|0.8105|83.32%|
 
 #### Stage-2 test results
 |Model|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |Stage-2|99.50%|77.34%|72.70%|99.55%|72.64%|82.05%|0.7568|0.9658|0.8243|84.34%|
 
 
