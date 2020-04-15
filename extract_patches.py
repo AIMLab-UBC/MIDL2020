@@ -210,7 +210,7 @@ if __name__ == '__main__':
     parser.add_argument('--h5_save_path', type=str, required=False,
                         default='/projects/ovcare/classification/midl_dataset/dataset.h5')
     parser.add_argument('--patch_ids_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/midl_dataset/patch_ids.txt')
+                        default='/projects/ovcare/classification/midl_dataset/patch_ids/patch_ids.txt')
     parser.add_argument('--patch_size', type=int, required=True)
     parser.add_argument('--resize_size', action='append', required=True)
 
@@ -224,6 +224,12 @@ if __name__ == '__main__':
 
     if not os.path.exists(args.patch_save_dir):
         os.makedirs(args.patch_save_dir)
+
+    if not os.path.exists(os.path.join(args.patch_save_dir, 'patch_ids')):
+        os.makedirs(os.path.join(args.patch_save_dir, 'patch_ids'))
+
+    if not os.path.exists(os.path.join(args.patch_save_dir, 'results')):
+        os.makedirs(os.path.join(args.patch_save_dir, 'results'))
 
     n_process = psutil.cpu_count()
     utils.make_subtype_dirs(args.patch_save_dir)
