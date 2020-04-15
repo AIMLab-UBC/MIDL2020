@@ -69,8 +69,18 @@ def extract_annotated_patches(slide_path, save_dir, slide_label, annotation, pat
                     patch = preprocess.extract_and_resize(
                         slide, patch_loc_width, patch_loc_height, patch_size, resize_size)
                     if preprocess.check_luminance(np.asarray(patch)):
-                        patch.save(os.path.join(save_dir, '{}_{}.png'.format(
-                            patch_loc_width, patch_loc_height)))
+                        patch_save_path = os.path.join(save_dir, str(resize_size[0]), '{}_{}.png'.format(
+                            patch_loc_width, patch_loc_height))
+                        if not os.path.exists(patch_save_path):
+                            patch = preprocess.extract_and_resize(
+                                slide, patch_loc_width, patch_loc_height, patch_size, resize_size[0])
+                            patch.save(patch_save_path)
+                        patch_save_path = os.path.join(save_dir, str(resize_size[1]), '{}_{}.png'.format(
+                            patch_loc_width, patch_loc_height))
+                        if not os.path.exists(patch_save_path):
+                            patch = preprocess.extract_and_resize(
+                                slide, patch_loc_width, patch_loc_height, patch_size, resize_size[1])
+                            patch.save(patch_save_path)
 
 
 def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, patch_size, resize_size):
@@ -141,8 +151,10 @@ def produce_args(slides, save_dir, annotations, patch_size, resize_size):
     args = []
     for slide in slides:
         slide_id, slide_label = utils.get_info_from_slide_path(slide)
-        if not os.path.exists(os.path.join(save_dir, slide_label.name, slide_id)):
-            os.makedirs(os.path.join(save_dir, slide_label.name, slide_id))
+        for resize in resize_size:
+            if not os.path.exists(os.path.join(save_dir, slide_label.name, slide_id)):
+                os.makedirs(os.path.join(
+                    save_dir, slide_label.name, slide_id, str(resize)))
         arg = (slide, os.path.join(save_dir, slide_label.name, slide_id),
                slide_label.name, annotations[slide_id], patch_size, resize_size)
         args.append(arg)
@@ -181,17 +193,23 @@ if __name__ == '__main__':
     parser.add_argument('--slides_dir', type=str, required=False,
                         default='/projects/ovcare/WSI/Dataset_Slides_500_cases')
     parser.add_argument('--patch_save_dir', type=str, required=False,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300')
+                        default='/projects/ovcare/classification/midl_dataset/dataset')
     parser.add_argument('--annotation_dir', type=str, required=False,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/annotations')
+                        default='/projects/ovcare/classification/midl_dataset/annotations')
     parser.add_argument('--h5_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300.h5')
+                        default='/projects/ovcare/classification/midl_dataset/dataset.h5')
     parser.add_argument('--patch_ids_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale_300_patch_ids.txt')
+                        default='/projects/ovcare/classification/midl_dataset/patch_ids.txt')
     parser.add_argument('--patch_size', type=int, required=True)
-    parser.add_argument('--resize_size', type=int, required=True)
+    parser.add_argument('--resize_size', action='append', required=True)
 
     args = parser.parse_args()
+
+    args.resize_size = [int(size) for size in args.resize_size]
+    if len(args.resize_size) == 1:
+        args.resize_size = args.resize_size[0]
+    else:
+        args.resize_size = sorted(args.resize_size, reverse=True)
 
     if not os.path.exists(args.patch_save_dir):
         os.makedirs(args.patch_save_dir)
