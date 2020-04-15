@@ -31,6 +31,7 @@ Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_
 # Get Started
 ### Installation
 - Install the required packages
+`pip install torch==1.2.0+cu92 torchvision==0.4.0+cu92 -f https://download.pytorch.org/whl/torch_stable.html`
 `pip install -r requirements.txt`
 
 - Clone this repo
