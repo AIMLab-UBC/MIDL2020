@@ -85,9 +85,9 @@ First of all, the `enum` in `utils/subtype_enum.py` should be defined.
 
 Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512 and 256 * 256 using the `extract_patches.py`. This script not only extract patches, but also store the patches into a H5 file for easy data transfer and management. However, we use our own data annotation file so the annotation parse and check portion needs to changed for other dataset. 
 
-### Patch-level: train, validation and test
+We store the patches in the h5 files who has the format `class_name/slide_id/patch_locaton_x_y` and use `.txt` files to store the data entry ids. 
 
-**A detailed explanation of the data splits and results in the short paper are available in the section Datasets**
+### Patch-level: train, validation and test
 
 The following bash script is used to invokve training, validation and test:
 ```
@@ -107,11 +107,12 @@ echo 'Stage 2 - Patch Size 512 * 512 Validation'
 ```
 
 ### Slide-level: train and test
-We train Random Forests using six-fold cross validation on the results of six patch-level test set. 
+We train Random Forests using 6-fold cross validation on the results of six patch-level test set. 
 
 After changing the path to the six patch-level results in the `slide_level.py`, simply run `python3 slide_level.py` and it will output the slide-level results as well as save the trained model. 
 
-
+### Our results
+We include our patch-level and slide-level results in `./results/`. 
 
 # Datasets and Detailed Results
 The epithelial ovarian carcinoma whole-slide pathology images used in this study are available from the [corresponding author](mailto:ali.bashashati@ubc.ca) upon reasonable request.
