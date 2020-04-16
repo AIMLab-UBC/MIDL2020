@@ -3,6 +3,7 @@ from utils.subtype_enum import SubtypeEnum
 from sklearn import ensemble
 from sklearn.preprocessing import StandardScaler
 from PIL import Image
+from sklearn.metrics import accuracy_score
 import models.networks as networks
 import data.preprocess as preprocess
 import utils.utils as utils
