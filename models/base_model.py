@@ -16,6 +16,7 @@ class BaseModel():
     def __init__(self, config):
         self.config = config
         self.deep_classifier = config.deep_classifier
+        self.deep_model = config.deep_model
         # avoid same hyperparameters setup result in the same name
         self.model_name_prefix = config.model_name_prefix
         self.lr = config.lr

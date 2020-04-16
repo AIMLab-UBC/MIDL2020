@@ -489,8 +489,9 @@ def export_h5_ids(h5_path, export_path):
     with h5py.File(h5_path, 'r') as h5f_image, open(export_path, 'w') as export_f:
         for subtype_key, subtype_group in h5f_image.items():
             for slide_key, slide_group in h5f_image[subtype_key].items():
-                for patch_key, patch_group in h5f_image[subtype_key][slide_key].items():
-                    patch_id = '/'.join([subtype_key, slide_key, patch_key])
+                for patch_key, patch_group in h5f_image[subtype_key][slide_key]['256'].items():
+                    patch_id = '/'.join([subtype_key,
+                                         slide_key, '256', patch_key])
                     export_f.write('{}\n'.format(patch_id))
 
 
