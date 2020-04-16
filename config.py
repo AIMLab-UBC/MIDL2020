@@ -97,6 +97,8 @@ main_arg.add_argument('--use_pretrained', action='store_true')
 
 main_arg.add_argument('--use_equalized_batch', action='store_true')
 
+main_arg.add_argument('--l2_decay', type=float, default=0)
+
 main_arg.add_argument('--load_model_id', type=str,
                       default='max_val_acc')
 

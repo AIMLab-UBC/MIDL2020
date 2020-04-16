@@ -20,6 +20,7 @@ class BaseModel():
         # avoid same hyperparameters setup result in the same name
         self.model_name_prefix = config.model_name_prefix
         self.lr = config.lr
+        self.l2_decay = config.l2_decay
         self.batch_size = config.batch_size
         self.epoch = config.epoch
         self.n_subtypes = config.n_subtypes

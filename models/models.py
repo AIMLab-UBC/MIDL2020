@@ -85,6 +85,8 @@ class DeepModel(BaseModel):
              str(self.lr), 'bs' + str(self.batch_size), 'e' + str(self.epoch)]
         if self.n_eval_samples != 100:
             n += ['neval'+str(self.n_eval_samples)]
+        if self.l2_decay != 0:
+            n += ['l2'+str(self.l2_decay)]
         if self.use_pretrained:
             n += ['pw']
         if self.use_equalized_batch:
