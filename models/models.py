@@ -2,6 +2,7 @@ from models.base_model import BaseModel
 from utils.subtype_enum import SubtypeEnum
 from sklearn import ensemble
 from sklearn.preprocessing import StandardScaler
+from PIL import Image
 import models.networks as networks
 import utils.utils as utils
 import numpy as np
