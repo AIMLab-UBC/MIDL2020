@@ -6,17 +6,16 @@
 </p>
 
 
-This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=VXdQD8B307). The code was written by [Yiping Wang](http://yiping.wang.vision). If you use this code for your research, please cite:
+This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=VXdQD8B307). Citation information:
 
 ```
 @inproceedings{
 wang2020classification,
 title={Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning},
 author={Yiping Wang, David Farnell, Hossein Farahani, Mitchell Nursey, Basile Tessier-Cloutier, Steven J.M. Jones, David G. Huntsman, C. Blake Gilks, Ali Bashashati},
-booktitle={Submitted to Medical Imaging with Deep Learning},
+booktitle={Proceedigs of Medical Imaging with Deep Learning (MIDL)},
 year={2020},
-url={https://openreview.net/forum?id=VXdQD8B307},
-note={under review}
+url={https://openreview.net/forum?id=VXdQD8B307}
 }
 ```
 
@@ -25,8 +24,8 @@ Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_
 # Prerequisites
 - Linux or macOS
 - Python 3.5.2
-- PyTorch 1.0.0
-- scikit-learn 0.22.2.post1
+- PyTorch 1.3.0+cu92
+- scikit-learn 0.22.1
 - NVIDIA GPU + CUDA CuDNN
 
 # Get Started
