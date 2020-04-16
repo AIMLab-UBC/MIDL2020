@@ -9,7 +9,7 @@ class Baseline(nn.Module):
         # init vgg19_bn
         self.cnn = torchvision.vgg19_bn(pretrained=use_pretrained)
         # modify the last fully-connected layer
-        self.cnn.classifier._modules['6'] = torch.nn.Linear(4096, num_classes)
+        self.cnn.classifier._modules['6'] = nn.Linear(4096, num_classes)
 
     def forward(self, x):
         # forward pass to compute logits
@@ -65,7 +65,7 @@ class TwoStageCNN(nn.Module):
         # backbone model
         model = torchvision.models.vgg19_bn(pretrained=use_pretrained)
         # modify the last fully-connected layer
-        model.classifier._modules['6'] = torch.nn.Linear(4096, num_classes)
+        model.classifier._modules['6'] = nn.Linear(4096, num_classes)
         # load weights from 256 * 256
         # and change model for 512 * 512 input
         if patch_size == 512:
