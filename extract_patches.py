@@ -123,6 +123,7 @@ def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, p
     slides = glob.glob(os.path.join(slide_dir, '**', '*.tiff'))
     annotations = utils.read_annotations(annotation_dir)
     slides = utils.exclude_slides_without_annotations(slides, annotations)
+    print(slides)
 
     with Pool(processes=n_process) as p:
         n_slides = len(slides)
@@ -204,13 +205,13 @@ if __name__ == '__main__':
     parser.add_argument('--slides_dir', type=str, required=False,
                         default='/projects/ovcare/WSI/Dataset_Slides_500_cases')
     parser.add_argument('--patch_save_dir', type=str, required=False,
-                        default='/projects/ovcare/classification/midl_dataset/dataset')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset')
     parser.add_argument('--annotation_dir', type=str, required=False,
-                        default='/projects/ovcare/classification/midl_dataset/annotations')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/annotations')
     parser.add_argument('--h5_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/midl_dataset/dataset.h5')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/dataset.h5')
     parser.add_argument('--patch_ids_save_path', type=str, required=False,
-                        default='/projects/ovcare/classification/midl_dataset/patch_ids/patch_ids.txt')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/patch_ids.txt')
     parser.add_argument('--patch_size', type=int, required=True)
     parser.add_argument('--resize_size', action='append', required=True)
 
