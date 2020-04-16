@@ -111,7 +111,7 @@ class DeepModel(BaseModel):
             # init baseline models, i.e., vgg19_bn
             self.model = networks.Baseline(
                 num_classes=self.n_subtypes, use_pretrained=self.use_pretrained)
-        elif self.deep_classifier.lower() == 'multi_stage':
+        elif self.deep_classifier.lower() == 'two_stage':
             # init multi-stage model
             load_name = self.name()
             if self.expert_magnification == '512':
