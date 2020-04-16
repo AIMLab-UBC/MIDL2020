@@ -7,7 +7,7 @@ class Baseline(nn.Module):
     def __init__(self, num_classes=5, use_pretrained=False):
         super(Baseline, self).__init__()
         # init vgg19_bn
-        self.cnn = torchvision.vgg19_bn(pretrained=use_pretrained)
+        self.cnn = torchvision.models.vgg19_bn(pretrained=use_pretrained)
         # modify the last fully-connected layer
         self.cnn.classifier._modules['6'] = nn.Linear(4096, num_classes)
 

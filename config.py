@@ -84,7 +84,7 @@ main_arg.add_argument('--optim', type=str, default='Adam')
 
 main_arg.add_argument('--deep_model', type=str, default='DeepModel')
 
-main_arg.add_argument('--deep_classifier', type=str, default='baseline')
+main_arg.add_argument('--deep_classifier', type=str, default='two_stage')
 
 main_arg.add_argument('--continue_train', action='store_true')
 
