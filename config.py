@@ -80,7 +80,7 @@ main_arg.add_argument('--n_eval_samples', type=int,
 main_arg.add_argument('--n_subtypes', type=int,
                       default=5)
 
-main_arg.add_argument('--expert_magnification', type=int,
+main_arg.add_argument('--expert_magnification', type=str,
                       default=256)
 
 main_arg.add_argument('--optim', type=str, default='Adam')
