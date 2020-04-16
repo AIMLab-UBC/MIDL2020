@@ -40,9 +40,6 @@ main_arg.add_argument('--test_ids_file_name', type=str,
                       default='patch_ids/1_2_train_3_eval_eval_1_ids.txt',
                       help='Testing patch path ids')
 
-main_arg.add_argument('--testing_output_file_name',
-                      type=str, default='a_patch_probability.txt')
-
 main_arg.add_argument('--preload_image_file_name',
                       type=str, default='768_monoscale.h5')
 
