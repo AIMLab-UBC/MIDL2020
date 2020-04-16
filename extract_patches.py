@@ -123,7 +123,9 @@ def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, p
     slides = glob.glob(os.path.join(slide_dir, '**', '*.tiff'))
     annotations = utils.read_annotations(annotation_dir)
     slides = utils.exclude_slides_without_annotations(slides, annotations)
-    print(slides)
+    print(slides[:100])
+    slides = ['/projects/ovcare/WSI/Dataset_Slides_500_cases/clear_cell_carcinoma_100/VOA-1362A.tiff',
+              '/projects/ovcare/WSI/Dataset_Slides_500_cases/high_grade_serous_carcinoma_300/VOA-1912A.tiff',  '/projects/ovcare/WSI/Dataset_Slides_500_cases/mucinous_carcinoma_50/VOA-1179B.tiff', ]
 
     with Pool(processes=n_process) as p:
         n_slides = len(slides)
