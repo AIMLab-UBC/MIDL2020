@@ -4,6 +4,7 @@ from sklearn import ensemble
 from sklearn.preprocessing import StandardScaler
 from PIL import Image
 import models.networks as networks
+import data.preprocess as preprocess
 import utils.utils as utils
 import numpy as np
 import torch
