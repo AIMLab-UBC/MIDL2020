@@ -1,3 +1,4 @@
+
 # MIDL2020
 
 <p align="center">
@@ -46,13 +47,15 @@ cd MIDL2020
 
 - `patch_level.py` is the patch-level classifier entry. Inside this file, function `train` initialize models, create data loader, optimize model weights, log training information, etc. `evaluate` simply loads the trained model and apply the model on validation or testing sets. 
 
+- `slide_level.py` is the slide-level classifier entry. Inside this file, function `main` initialize models, create a data loader, optimize model weights, and compute the 6-fold cross-validation. 
+
 - `config.py` is the program that reads arguments from the user. Therefore, you can custom any hyperparameters or settings through `config.py`
 
 - `models` is the sub-module that contains implementation involves models.
 
     - Inside `models` sub-module, `models/base_model.py` is the template class for `models/models.py`. It defines various expected behaviours of a model, such as `forward`, `optimize_weights`, `load_state`, `save_state`, etc. Any models should inherit `BaseModel`. 
 
-    - Inside `models` sub-module, `models/models.py` is the `models/networks.py` interface. It initialize `models/networks.py` and optimize the weights of `models/networks.py`. Different models in `models/models.py` are summaized in the following table. 
+    - Inside `models` sub-module, `models/models.py` is the `models/networks.py` interface. It initializes `models/networks.py` and optimizes the weights of `models/networks.py`. Different models in `models/models.py` are summarized in the following table. 
 
         | Models | Usage |
         | ------------- |:-------------:|
@@ -63,15 +66,15 @@ cd MIDL2020
 
 - `data` is the sub-module that contains data loader, preprocess, and post-process functions. 
 
-    - Inside `data` sub-module, `data/base_dataset.py` is the template class for other data loaders. It simply defines data loader behaviour, and assign `config.py` settings into the current data loader. Moreover, it also modifies the patch ids if requires, such as change multi-scale model scales, etc. 
+    - Inside the `data` sub-module, `data/base_dataset.py` is the template class for other data loaders. It simply defines data loader behaviour, and assign `config.py` settings into the current data loader. Moreover, it also modifies the patch ids if requires, such as change multi-scale model scales, etc. 
 
-    - Inside `data` sub-module, `data/patch_dataset.py` is the main patch images or patch features data loader. 
+    - Inside the `data` sub-module, `data/patch_dataset.py` is the main patch images or patch features data loader. 
 
         | Dataset | Usage |
         | ------------- |:-------------:|
         | `SubtypePatchDataset` | It loads patch images from H5 files and applies preprocess steps.|
 
-    - Inside `data` sub-module, `data/create_patient_groups.py` is the helper script to split the dataset by patients. 
+    - Inside the `data` sub-module, `data/create_patient_groups.py` is the helper script to split the dataset by patients. 
 
 
 - `utils` is the sub-module that contains simple but useful function snippet. 
@@ -84,13 +87,13 @@ cd MIDL2020
 ### Patch extraction
 First of all, the `enum` in `utils/subtype_enum.py` should be defined.
 
-Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512 and 256 * 256 using the `extract_patches.py`. This script not only extract patches, but also store the patches into a H5 file for easy data transfer and management. However, we use our own data annotation file so the annotation parse and check portion needs to changed for other dataset. 
+Afterwards, we extract the 1024 * 1024 patches and then downsampled to 512 * 512 and 256 * 256 using the `extract_patches.py` script. This script not only extract patches but also store the patches into an H5 file for easy data transfer and management. However, we use our data annotation file so the annotation parse and check portion need to change for other datasets. 
 
-We store the patches in the h5 files who has the format `class_name/slide_id/patch_locaton_x_y` and use `.txt` files to store the data entry ids. 
+We store the patches in the h5 files who has the format `subtype_name/slide_id/patch_locaton_x_y` and use `.txt` files to store the data entry ids. 
 
 ### Patch-level: train, validation and test
 
-The following bash script is used to invokve training, validation and test:
+The following bash script is used to invoke training, validation and test:
 ```
 #!/bin/bash
 chmod 775 ./patch_level.py
@@ -108,7 +111,7 @@ echo 'Stage 2 - Patch Size 512 * 512 Validation'
 ```
 
 ### Slide-level: train and test
-We train Random Forests using 6-fold cross validation on the results of six patch-level test set. 
+We train Random Forests using 6-fold cross-validation on the results of six patch-level test set. 
 
 After changing the path to the six patch-level results in the `slide_level.py`, simply run `python3 slide_level.py` and it will output the slide-level results as well as save the trained model. 
 
@@ -154,7 +157,7 @@ Group 3 has the following distributions:
 <img src="./docs/nested-cv.png" width="600" class="center"/>
 </p>
 
-For slide-level classification, we only use the patch-level test set results to build the input matrix to train random forests, and we report the 6-fold cross-validation slide-level results.
+For slide-level classification, we only use the patch-level test set results (as shown in the above figure) to build the input matrix to train random forests, and we report the 6-fold cross-validation slide-level results.
 
 |Split|CC|LGSC|EC|MC|HGSC|Weighted Accuracy|Kappa|AUC|F1 Score|Average Accuracy|
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -344,6 +347,3 @@ For patch-level classification, we employ a 3-fold cross-validation scheme with 
 |Baseline|94.78%|31.24%|65.25%|39.14%|51.64%|51.61%|0.3993|0.8751|0.5124|56.41%|
 |Stage-1|95.58%|33.35%|90.04%|33.88%|58.13%|54.40%|0.4404|0.8893|0.5464|62.20%|
 |Stage-2|95.96%|28.12%|53.65%|41.63%|75.05%|57.06%|0.4615|0.8287|0.5492|58.88%|
-
-
-
