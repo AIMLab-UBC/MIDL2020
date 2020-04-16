@@ -448,7 +448,6 @@ def create_subtype_patient_slide_patch_dict(patch_ids):
     """
     subtype_patient_slide_patch = {}
     for patch_id in patch_ids:
-        patch_id = create_patch_id(patch_id)
         patch_subtype = SubtypeEnum(get_label_by_patch_id(
             patch_id)).name
         if patch_subtype not in subtype_patient_slide_patch:
