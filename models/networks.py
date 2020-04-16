@@ -1,5 +1,6 @@
 from torch import nn
 import torchvision
+import torch
 
 
 class Baseline(nn.Module):
