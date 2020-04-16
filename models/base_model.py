@@ -32,6 +32,7 @@ class BaseModel():
         self.is_multiscale_expert = config.is_multiscale_expert
         self.expert_magnification = config.expert_magnification
         self.is_multiscale = config.is_multiscale_expert
+        self.load_model_id = config.load_model_id
         # store evaluation data labels
         self.eval_data_labels = []
 
