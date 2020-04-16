@@ -1,3 +1,5 @@
+import utils.utils as utils
+from utils.subtype_enum import SubtypeEnum
 import numpy as np
 import re
 import os
@@ -11,119 +13,31 @@ import sys
 import os.path
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-from utils.subtype_enum import SubtypeEnum
-import utils.utils as utils
 
 PATIENT_REGEX = utils.PATIENT_REGEX
 
 
-def number_formatter(counts, prefix):
-    prefix = prefix.replace('_', ' ')
-    print(r'{} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} & \num[group-separator={{,}}]{{{}}} \\'.format(
-        prefix, int(counts[0]), int(counts[1]), int(counts[2]), int(counts[3]), int(counts[4]), int(counts.sum())))
-
-
-def percentage_formatter(counts, prefix):
-    percentages = np.asarray(counts)
-    percentages = counts / counts.sum() * 100
-    print('{} & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {:.2f}\% & {} \\'.format(
-        prefix, percentages[0], percentages[1], percentages[2], percentages[3], percentages[4], int(counts.sum())) + '\\')
-
-
-def group_summary(group_json):
-    """Function to print the group summary
-    Parameters
-    ----------
-    group_json : string
-        Absoluate path to group information json file
-
-    Returns
-    -------
-    None
-    """
-    subtype_names = [s.name for s in SubtypeEnum]
-
-    total_slide_counts = dict(
-        zip(subtype_names, [0 for s in subtype_names]))
-    total_patch_counts = dict(
-        zip(subtype_names, [0 for s in subtype_names]))
-
-    slide_count_set = set()
-
-    for group_id, patch_ids in group_json.items():
-        patients = set()
-        subtype_patient_counts = dict(
-            zip(subtype_names, [0 for s in subtype_names]))
-        subtype_patch_counts = dict(
-            zip(subtype_names, [0 for s in subtype_names]))
-
-        for patch_id in patch_ids:
-            slide_id = utils.get_slide_by_patch_id(
-                patch_id)
-
-            match = re.search(PATIENT_REGEX, slide_id)
-            if match:
-                patient_num = match.group(1)
-            else:
-                raise NotImplementedError
-
-            if patient_num not in patients:
-                patient_subtype = SubtypeEnum(utils.get_label_by_patch_id(
-                    patch_id)).name
-                subtype_patient_counts[patient_subtype] += 1
-
-            patients.add(patient_num)
-            patch_subtype = SubtypeEnum(utils.get_label_by_patch_id(
-                patch_id)).name
-
-            subtype_patch_counts[patch_subtype] += 1
-            total_patch_counts[patch_subtype] += 1
-
-            if slide_id not in slide_count_set:
-                slide_count_set.add(slide_id)
-                total_slide_counts[patch_subtype] += 1
-
-        number_formatter(np.asarray(
-            [subtype_patient_counts[s.name] for s in SubtypeEnum]), ' Patient in Group ' + group_id.split('_')[-1])
-        number_formatter(np.asarray(
-            [subtype_patch_counts[s.name] for s in SubtypeEnum]), ' Patch in Group ' + group_id.split('_')[-1])
-
-    number_formatter(np.asarray(
-        [total_slide_counts[s.name] for s in SubtypeEnum]), 'Whole Slide Image')
-    number_formatter(np.asarray(
-        [total_patch_counts[s.name] for s in SubtypeEnum]), 'Patch')
-
-
 def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, seed, n_subtype=5, scale='1024'):
     """Function to generate N groups that contain unique patients
-
     Parameters
     ----------
     n_groups : int
         Number of groups, each group contains patches from unique patients
-
     patch_dir : string
         Absoluate path to a directory contains extracted patches
-
     out_path : string
         Absoluate path to store the group json files
-
     min_patches : int
         Minimum number of patches per each slide
-
     max_patches : int
         Maximum number of patches per each slide
-
     seed : int
         Random
-
     n_subtype: int
         Numbe of subtypes
-
     scale : string
         For center zoom multiscale: 20, 10, 5
         For progressive resizing: 1024, 512, 256
-
     Returns
     -------
     None
@@ -193,17 +107,14 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
 def create_val_test_splits(eval_ids):
     """Function to create validation and test splits based on evaluation ids
        This function ensures unique patches in validation and testing sets
-
     Parameters
     ----------
     eval_ids : list
         List of patch ids in evaludation set
-
     Returns
     -------
     val_ids : list
         List of patch ids in validation set
-
     test_ids : list
         List of patch ids in testing set
     """
@@ -234,31 +145,18 @@ def create_val_test_splits(eval_ids):
 
 def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, seed):
     """Function to create training, validation and testing sets
-
     Parameters
     ----------
     json_path : string
         Absoluate path to group information json file
-
     out_dir : string
         Absoluate path to the directory that store the splits
-
     preifx : string
         For different experiments
-
     Returns
     -------
     None
     """
-    prefix_dict = {'1_2_train_3_eval_train_ids': 'A/B Training',
-                   '1_2_train_3_eval_eval_0_ids': 'A/B Validation/Testing 0',
-                   '1_2_train_3_eval_eval_1_ids': 'A/B Validation/Testing 1',
-                   '1_3_train_2_eval_train_ids': 'C/D Training',
-                   '1_3_train_2_eval_eval_0_ids': 'C/D Validation/Testing 0',
-                   '1_3_train_2_eval_eval_1_ids': 'C/D Validation/Testing 1',
-                   '2_3_train_1_eval_train_ids': 'E/F Training',
-                   '2_3_train_1_eval_eval_0_ids': 'E/F Validation/Testing 0',
-                   '2_3_train_1_eval_eval_1_ids': 'E/F Validation/Testing 1'}
 
     with open(json_path, 'r') as f:
         groups = json.load(f)
@@ -287,24 +185,24 @@ def create_train_val_test_splits(json_path, out_dir, n_groups, n_train_groups, s
             random.shuffle(train_ids)
             for train_id in train_ids:
                 f.write('{}\n'.format(train_id))
-        percentage_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_train_ids.txt')), prefix_dict[group_name + '_train_ids'])
+        latex_formatter(utils.count_subtype(
+            os.path.join(out_dir, group_name + '_train_ids.txt')), group_name + '_train_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_0_ids.txt'), 'w') as f:
             random.seed(seed)
             random.shuffle(val_ids)
             for val_id in val_ids:
                 f.write('{}\n'.format(val_id))
-        percentage_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_0_ids.txt')), prefix_dict[group_name + '_eval_0_ids'])
+        latex_formatter(utils.count_subtype(
+            os.path.join(out_dir, group_name + '_eval_0_ids.txt')), group_name + '_eval_0_ids')
 
         with open(os.path.join(out_dir, group_name + '_eval_1_ids.txt'), 'w') as f:
             random.seed(seed)
             random.shuffle(test_ids)
             for test_id in test_ids:
                 f.write('{}\n'.format(test_id))
-        percentage_formatter(utils.count_subtype(
-            os.path.join(out_dir, group_name + '_eval_1_ids.txt')), prefix_dict[group_name + '_eval_1_ids'])
+        latex_formatter(utils.count_subtype(
+            os.path.join(out_dir, group_name + '_eval_1_ids.txt')), group_name + '_eval_1_ids')
 
 
 if __name__ == "__main__":
@@ -313,13 +211,13 @@ if __name__ == "__main__":
     parser.add_argument("--n_groups", type=int, default=3)
     parser.add_argument("--n_train_groups", type=int, default=2)
     parser.add_argument("--patch_dir", type=str,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/patch_ids/full_patch_ids.txt')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/patch_ids.txt')
     parser.add_argument("--out_path", type=str,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/new_ids/patient_group.json')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/patient_group.json')
     parser.add_argument("--min_patches", type=int, default=10)
     parser.add_argument("--max_patches", type=int, default=1000000)
     parser.add_argument("--split_dir", type=str,
-                        default='/projects/ovcare/classification/ywang/midl_dataset/768_monoscale/new_ids/')
+                        default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/')
 
     args = parser.parse_args()
 
