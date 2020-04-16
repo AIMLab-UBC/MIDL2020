@@ -1,5 +1,3 @@
-import utils.utils as utils
-from utils.subtype_enum import SubtypeEnum
 import numpy as np
 import re
 import os
@@ -14,6 +12,7 @@ import os.path
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 import utils.utils as utils
+from utils.subtype_enum import SubtypeEnum
 
 PATIENT_REGEX = utils.PATIENT_REGEX
 
