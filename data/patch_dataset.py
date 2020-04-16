@@ -17,7 +17,7 @@ class PatchDataset(BaseDataset):
             sample_label = index % self.n_subtypes
             # obatin all the the patch has the same label
             label_idx = self.label_list == sample_label
-            print(np.unique(label_list))
+            print(np.unique(self.label_list))
             # randomly select one patch
             cur_data_id = np.random.choice(self.cur_data_ids[label_idx])
         else:
