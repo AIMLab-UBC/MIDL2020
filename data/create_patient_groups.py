@@ -98,8 +98,6 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
     with open(out_path, 'w') as f:
         json.dump(groups, f)
 
-    group_summary(groups)
-
     print('Ignored Slides')
     print(ignored_slides)
 
