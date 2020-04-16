@@ -28,7 +28,7 @@ def evaluate(config):
     pred_labels = []
     gt_labels = []
     pred_probs = np.array([]).reshape(0, config.n_subtypes)
-    with open(os.path.join(config.dataset_dir, config.testing_output_dir_name, config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
+    with open(os.path.join(config.dataset_dir, 'results', config.mode.lower() + '_' + config.testing_output_file_name), 'w') as f:
         for data in tqdm(data_loader, desc=prefix, dynamic_ncols=True):
             cur_data, cur_label, patch_infos = data
             with torch.no_grad():

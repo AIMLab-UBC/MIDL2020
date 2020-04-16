@@ -102,6 +102,9 @@ main_arg.add_argument('--l2_decay', type=float, default=0)
 main_arg.add_argument('--load_model_id', type=str,
                       default='max_val_acc')
 
+main_arg.add_argument('--testing_output_file_name', type=str,
+                      default='distribution.txt')
+
 
 def get_config():
     config, unparsed = parser.parse_known_args()
