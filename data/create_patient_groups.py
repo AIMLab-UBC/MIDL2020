@@ -17,14 +17,14 @@ from utils.subtype_enum import SubtypeEnum
 PATIENT_REGEX = utils.PATIENT_REGEX
 
 
-def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, seed, n_subtype=5, scale='1024'):
+def generate_groups(n_groups, patch_ids_path, out_path, min_patches, max_patches, seed, n_subtype=5):
     """Function to generate N groups that contain unique patients
     Parameters
     ----------
     n_groups : int
         Number of groups, each group contains patches from unique patients
-    patch_dir : string
-        Absoluate path to a directory contains extracted patches
+    patch_ids_path : string
+        Absoluate path to a txt file contains all patch ids
     out_path : string
         Absoluate path to store the group json files
     min_patches : int
@@ -35,9 +35,6 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
         Random
     n_subtype: int
         Numbe of subtypes
-    scale : string
-        For center zoom multiscale: 20, 10, 5
-        For progressive resizing: 1024, 512, 256
     Returns
     -------
     None
@@ -50,10 +47,8 @@ def generate_groups(n_groups, patch_dir, out_path, min_patches, max_patches, see
     for group_idx in range(n_groups):
         groups['group_' + str(group_idx + 1)] = []
 
-    if os.path.isfile(patch_dir):
-        patches = utils.read_data_ids(patch_dir)
-    elif os.path.isdir(patch_dir):
-        patches = glob.glob(os.path.join(patch_dir, '**', '**', '*.png'))
+    if os.path.isfile(patch_ids_path):
+        patches = utils.read_data_ids(patch_ids_path)
     else:
         raise NotImplementedError
 
@@ -119,7 +114,6 @@ def create_val_test_splits(eval_ids):
     subtype_names = [s.name for s in SubtypeEnum]
     subtype_patient_slide_patch = utils.create_subtype_patient_slide_patch_dict(
         eval_ids)
-    print(subtype_patient_slide_patch)
     val_ids = []
     test_ids = []
     for subtype in subtype_names:
@@ -209,7 +203,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=256)
     parser.add_argument("--n_groups", type=int, default=3)
     parser.add_argument("--n_train_groups", type=int, default=2)
-    parser.add_argument("--patch_dir", type=str,
+    parser.add_argument("--patch_ids_path", type=str,
                         default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/patch_ids.txt')
     parser.add_argument("--out_path", type=str,
                         default='/projects/ovcare/classification/ywang/midl_dataset/test_dataset/patch_ids/patient_group.json')
@@ -220,7 +214,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    generate_groups(args.n_groups, args.patch_dir, args.out_path,
+    generate_groups(args.n_groups, args.patch_ids_path, args.out_path,
                     args.min_patches, args.max_patches, seed=args.seed)
     create_train_val_test_splits(
         args.out_path, args.split_dir, args.n_groups, args.n_train_groups, seed=args.seed)
