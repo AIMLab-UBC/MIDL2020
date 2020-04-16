@@ -123,10 +123,8 @@ def generate_annotated_patches(slide_dir, save_dir, annotation_dir, n_process, p
     slides = glob.glob(os.path.join(slide_dir, '**', '*.tiff'))
     annotations = utils.read_annotations(annotation_dir)
     slides = utils.exclude_slides_without_annotations(slides, annotations)
-    # slides = ['/projects/ovcare/WSI/Dataset_Slides_500_cases/clear_cell_carcinoma_100/VOA-1362A.tiff',
-    #           '/projects/ovcare/WSI/Dataset_Slides_500_cases/high_grade_serous_carcinoma_300/VOA-1912A.tiff',  '/projects/ovcare/WSI/Dataset_Slides_500_cases/mucinous_carcinoma_50/VOA-1179B.tiff', '/projects/ovcare/WSI/Dataset_Slides_500_cases/endometrioid_carcinoma_100/VOA-1003B.tiff', '/projects/ovcare/WSI/Dataset_Slides_500_cases/low_grade_serous_carcinoma_50/VOA-2266K.tiff']
-    slides = [
-        '/projects/ovcare/WSI/Dataset_Slides_500_cases/endometrioid_carcinoma_100/VOA-1003B.tiff']
+    slides = ['/projects/ovcare/WSI/Dataset_Slides_500_cases/clear_cell_carcinoma_100/VOA-1362A.tiff',
+              '/projects/ovcare/WSI/Dataset_Slides_500_cases/high_grade_serous_carcinoma_300/VOA-1912A.tiff',  '/projects/ovcare/WSI/Dataset_Slides_500_cases/mucinous_carcinoma_50/VOA-1179B.tiff', '/projects/ovcare/WSI/Dataset_Slides_500_cases/endometrioid_carcinoma_100/VOA-1003B.tiff', '/projects/ovcare/WSI/Dataset_Slides_500_cases/low_grade_serous_carcinoma_50/VOA-2266K.tiff']
     with Pool(processes=n_process) as p:
         n_slides = len(slides)
         prefix = 'Extracting Tumor Patches: '
