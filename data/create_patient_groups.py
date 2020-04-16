@@ -119,6 +119,7 @@ def create_val_test_splits(eval_ids):
     subtype_names = [s.name for s in SubtypeEnum]
     subtype_patient_slide_patch = utils.create_subtype_patient_slide_patch_dict(
         eval_ids)
+    print(subtype_patient_slide_patch)
     val_ids = []
     test_ids = []
     for subtype in subtype_names:
