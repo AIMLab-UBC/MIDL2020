@@ -25,8 +25,8 @@ Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_
 # Prerequisites
 - Linux or macOS
 - Python 3.5.2
-- PyTorch 1.0.0
-- scikit-learn 0.22.2.post1
+- PyTorch 1.3.0+cu92
+- scikit-learn 0.22.1
 - NVIDIA GPU + CUDA CuDNN
 
 # Get Started
