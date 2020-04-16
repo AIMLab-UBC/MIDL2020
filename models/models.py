@@ -189,7 +189,8 @@ class DeepModel(BaseModel):
             # load the new state dict
             self.model.load_state_dict(pretrained_dict)
 
-        self.optimizer.load_state_dict(state['optimizer'])
+        if self.continue_train:
+            self.optimizer.load_state_dict(state['optimizer'])
 
         model_id = state['iter_idx']
         return model_id
