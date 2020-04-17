@@ -38,7 +38,7 @@ Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_
 ```
 mkdir wsi_classification
 cd wsi_classification
-git clone https://github.com/AliBashashati/MIDL2020
+git clone https://github.com/AIMLab-UBC/MIDL2020
 cd MIDL2020
 ```
 
