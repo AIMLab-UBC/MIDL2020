@@ -6,16 +6,16 @@
 </p>
 
 
-This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=VXdQD8B307). Citation information:
+This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=RbHQNPTZfs). Citation information:
 
 ```
 @inproceedings{
 wang2020classification,
 title={Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning},
-author={Yiping Wang, David Farnell, Hossein Farahani, Mitchell Nursey, Basile Tessier-Cloutier, Steven J.M. Jones, David G. Huntsman, C. Blake Gilks, Ali Bashashati},
-booktitle={Proceedigs of Medical Imaging with Deep Learning (MIDL)},
+author={Yiping Wang and David Farnell and Hossein Farahani and Mitchell Nursey and Basile Tessier-Cloutier and Steven J.M. Jones and David G. Huntsman and C. Blake Gilks and Ali Bashashati},
+booktitle={Medical Imaging with Deep Learning},
 year={2020},
-url={https://openreview.net/forum?id=VXdQD8B307}
+url={https://openreview.net/forum?id=RbHQNPTZfs}
 }
 ```
 
