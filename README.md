@@ -6,18 +6,21 @@
 </p>
 
 
-This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://openreview.net/forum?id=RbHQNPTZfs). Citation information:
+This is the implementation of the [Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning](https://arxiv.org/abs/2005.10957). Citation information:
 
 ```
-@inproceedings{
-wang2020classification,
-title={Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning},
-author={Yiping Wang and David Farnell and Hossein Farahani and Mitchell Nursey and Basile Tessier-Cloutier and Steven J.M. Jones and David G. Huntsman and C. Blake Gilks and Ali Bashashati},
-booktitle={Medical Imaging with Deep Learning},
-year={2020},
-url={https://openreview.net/forum?id=RbHQNPTZfs}
+@misc{wang2020classification,
+    title={Classification of Epithelial Ovarian Carcinoma Whole-Slide Pathology Images Using Deep Transfer Learning},
+    author={Yiping Wang and David Farnell and Hossein Farahani and Mitchell Nursey and Basile Tessier-Cloutier and Steven J. M. Jones and David G. Huntsman and C. Blake Gilks and Ali Bashashati},
+    year={2020},
+    eprint={2005.10957},
+    archivePrefix={arXiv},
+    primaryClass={eess.IV}
 }
 ```
+
+[Presentation and Slides](https://2020.midl.io/papers/wang20b.html)
+[Reviews](https://openreview.net/forum?id=RbHQNPTZfs)
 
 Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_of_gans) and [fast.ai](https://www.fast.ai/2018/04/30/dawnbench-fastai/).
 
