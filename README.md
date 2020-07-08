@@ -20,6 +20,7 @@ This is the implementation of the [Classification of Epithelial Ovarian Carcinom
 ```
 
 [Presentation and Slides](https://2020.midl.io/papers/wang20b.html)
+
 [Reviews](https://openreview.net/forum?id=RbHQNPTZfs)
 
 Our work is inspired by [ProGAN](https://github.com/tkarras/progressive_growing_of_gans) and [fast.ai](https://www.fast.ai/2018/04/30/dawnbench-fastai/).
